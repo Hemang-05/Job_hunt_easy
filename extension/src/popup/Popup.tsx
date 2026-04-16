@@ -74,8 +74,9 @@ function Popup() {
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-2 border-t border-gray-100 text-xs text-gray-400 text-center">
-        Resume stays on your device. Never uploaded.
+      <div className="px-4 py-2 border-t border-gray-100 text-xs text-gray-400 text-center space-y-0.5 pb-3">
+        <div>Resume stays on your device. Never uploaded.</div>
+        <div className="text-[10px] text-gray-300">by Teknotical</div>
       </div>
     </div>
   )

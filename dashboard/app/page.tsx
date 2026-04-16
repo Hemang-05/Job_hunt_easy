@@ -167,6 +167,11 @@ export default function LandingPage() {
             </div>
          </div>
       </div>
+
+      {/* Footer */}
+      <footer className="text-center py-8 text-slate-500 text-sm border-t border-white/5">
+        Created by Hemang M <span className="opacity-70 font-medium">( Teknotical )</span>
+      </footer>
     </main>
   )
 }
