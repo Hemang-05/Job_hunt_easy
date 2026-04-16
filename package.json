@@ -1,0 +1,21 @@
+{
+  "name": "fillr",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "extension",
+    "dashboard"
+  ],
+  "scripts": {
+    "dev:extension": "npm run dev --workspace=extension",
+    "dev:dashboard": "npm run dev --workspace=dashboard",
+    "build:extension": "npm run build --workspace=extension",
+    "build:dashboard": "npm run build --workspace=dashboard",
+    "build": "npm run build:extension && npm run build:dashboard",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
