@@ -10,7 +10,7 @@ export async function DELETE(
     const { userId } = auth()
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const supabase = await createUserClient()
+    const { client: supabase } = await createUserClient()
     
     // Explicitly check how many rows were affected to handle the 404 case
     const { count, error } = await supabase
