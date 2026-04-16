@@ -8,6 +8,7 @@
 // ============================================================
 
 import { create } from 'zustand'
+import { API_BASE_URL } from '../shared/utils'
 import type { Settings, Resume, CachedAnswer } from '@fillr/types'
 import { DEFAULT_SETTINGS } from '@fillr/types'
 
@@ -37,7 +38,7 @@ export const useExtensionStore = create<ExtensionStore>((set, get) => ({
     // 1. Fetch current dashboard user
     let currentUserId: string | null = null
     try {
-      const res = await fetch('http://localhost:3000/api/auth/me', { credentials: 'include' })
+      const res = await fetch(`${API_BASE_URL}/api/auth/me`, { credentials: 'include' })
       const data = await res.json()
       currentUserId = data.userId
     } catch (err) {

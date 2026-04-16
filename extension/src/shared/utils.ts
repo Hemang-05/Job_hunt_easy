@@ -3,6 +3,12 @@
 // Utility functions used by both background and content script
 // ============================================================
 
+// ─── Environment configuration ─────────────────────────────
+/// <reference types="vite/client" />
+export const API_BASE_URL = import.meta.env.MODE === 'development'
+  ? 'http://localhost:3000'
+  : 'https://job-hunt-easy-dashboard.vercel.app'
+
 // ─── Question normalization ────────────────────────────────
 // SYSTEM DESIGN: We normalize before hashing so that:
 // "Why do you want THIS role?" and "why do you want this role"

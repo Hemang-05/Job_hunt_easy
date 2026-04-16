@@ -18,7 +18,7 @@ import type {
   Settings,
 } from '@fillr/types'
 import { DEFAULT_SETTINGS, FREE_GENERATION_LIMIT } from '@fillr/types'
-import { hashQuestion, normalizeQuestion } from '../shared/utils'
+import { hashQuestion, normalizeQuestion, API_BASE_URL } from '../shared/utils'
 import { buildPrompt } from '../shared/promptBuilder'
 import { scoreChunks } from '../shared/chunkScorer'
 
@@ -68,7 +68,7 @@ async function handleFillRequest(
 
     // Security: Check for account mismatch
     try {
-      const res = await fetch('http://localhost:3000/api/auth/me', { credentials: 'include' })
+      const res = await fetch(`${API_BASE_URL}/api/auth/me`, { credentials: 'include' })
       const data = await res.json()
       const currentUserId = data.userId
 
@@ -190,7 +190,7 @@ async function streamFromAPI({
 }) {
   console.debug('[Fillr] Calling /api/generate with model:', settings.model)
 
-  const response = await fetch('http://localhost:3000/api/generate', {
+  const response = await fetch(`${API_BASE_URL}/api/generate`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -459,7 +459,7 @@ async function syncToDashboard(payload: {
   jobContext?: { companyName?: string, roleTitle?: string, platform?: string }
 }) {
   try {
-    await fetch('http://localhost:3000/api/sync', {
+    await fetch(`${API_BASE_URL}/api/sync`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include', // Automatically passes Clerk __session cookies!

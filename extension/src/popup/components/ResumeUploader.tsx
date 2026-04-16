@@ -11,6 +11,7 @@ import * as pdfjsLib from 'pdfjs-dist'
 // @ts-ignore - Tell Vite to package the worker as a static asset URL
 import workerUrl from 'pdfjs-dist/build/pdf.worker.mjs?url'
 import { useExtensionStore } from '../store'
+import { API_BASE_URL } from '../../shared/utils'
 import type { Resume, ResumeChunk, ChunkType } from '@fillr/types'
 import { estimateSizeKb } from '../../shared/utils'
 
@@ -53,7 +54,7 @@ export function ResumeUploader() {
       // Fetch current userId from dashboard
       let currentUserId: string | undefined
       try {
-        const res = await fetch('http://localhost:3000/api/auth/me', { credentials: 'include' })
+        const res = await fetch(`${API_BASE_URL}/api/auth/me`, { credentials: 'include' })
         const data = await res.json()
         currentUserId = data.userId
       } catch (err) {
@@ -200,7 +201,7 @@ function chunkResumeText(rawText: string): ResumeChunk[] {
 
 async function syncResumeToSupabase(resume: Resume) {
   try {
-    await fetch('http://localhost:3000/api/resume/sync', {
+    await fetch(`${API_BASE_URL}/api/resume/sync`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include', // sends Clerk session cookie
