@@ -6,7 +6,7 @@ export default async function ResumePage() {
   let resume = null
 
   try {
-    const supabase = await createUserClient()
+    const { client: supabase } = await createUserClient()
     const { data } = await supabase
       .from('resumes')
       .select('*')
