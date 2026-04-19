@@ -13,10 +13,10 @@
 // ============================================================
 
 // Let the dashboard know the extension is actively running
-document.documentElement.setAttribute('data-fillr-installed', 'true')
+document.documentElement.setAttribute('data-job-hunt-easy-installed', 'true')
 
 import { getFieldId, sanitizeQuestion } from '../shared/utils'
-import type { ExtensionMessage } from '@fillr/types'
+import type { ExtensionMessage } from '@job-hunt-easy/types'
 
 // Map of fieldId → the actual DOM element
 // Needed to target the right field when stream chunks arrive
@@ -51,9 +51,9 @@ chrome.storage.onChanged.addListener((changes, area) => {
 })
 
 function removeAllButtons() {
-  document.querySelectorAll('[data-fillr-wrapper]').forEach((el) => el.remove())
-  document.body.querySelectorAll('[data-fillr-attached]').forEach((el) => {
-    delete (el as HTMLElement).dataset.fillrAttached
+  document.querySelectorAll('[data-job-hunt-easy-wrapper]').forEach((el) => el.remove())
+  document.body.querySelectorAll('[data-job-hunt-easy-attached]').forEach((el) => {
+    delete (el as HTMLElement).dataset.jobHuntEasyAttached
   })
   fieldRegistry.clear()
   wrapperRegistry.clear()
@@ -69,7 +69,7 @@ const keepAliveInterval = setInterval(() => {
   chrome.runtime.sendMessage({ type: 'KEEP_ALIVE' }).catch(() => {
     // Extension context invalidated (extension was reloaded).
     // This content script is now a zombie — clean up everything.
-    console.debug('[Fillr] Extension context lost. Cleaning up zombie UI.')
+    console.debug('[Job Hunt Easy] Extension context lost. Cleaning up zombie UI.')
     clearInterval(keepAliveInterval)
     removeAllButtons()
     observer.disconnect()
@@ -91,7 +91,7 @@ const observer = new MutationObserver((mutations) => {
     for (const node of mutation.addedNodes) {
       if (node.nodeType !== Node.ELEMENT_NODE) continue
       const el = node as HTMLElement
-      if (el.dataset?.fillrWrapper) continue // our own wrapper
+      if (el.dataset?.jobHuntEasyWrapper) continue // our own wrapper
       hasRelevant = true
       break
     }
@@ -148,7 +148,7 @@ function isRelevantField(el: HTMLElement): boolean {
   if (!isFormField(el)) return false
 
   // Skip if we already attached a button to this field
-  if (el.dataset.fillrAttached) return false
+  if (el.dataset.jobHuntEasyAttached) return false
   
   // Visibility check
   if (el.offsetWidth === 0 || el.offsetHeight === 0) return false
@@ -259,14 +259,14 @@ export function extractQuestion(el: HTMLElement): string {
 // page's styles cannot override ours.
 
 function attachFillButton(field: HTMLElement) {
-  field.dataset.fillrAttached = 'true'
+  field.dataset.jobHuntEasyAttached = 'true'
 
   const fieldId = getFieldId(field)
   fieldRegistry.set(fieldId, field)
 
   // Create a wrapper positioned fixed relative to the viewport
   const wrapper = document.createElement('div')
-  wrapper.dataset.fillrWrapper = 'true'
+  wrapper.dataset.jobHuntEasyWrapper = 'true'
   wrapper.style.cssText = `
     position: fixed;
     z-index: 2147483647;
@@ -281,7 +281,7 @@ function attachFillButton(field: HTMLElement) {
   const style = document.createElement('style')
   style.textContent = `
     :host { all: initial; }
-    .fillr-btn {
+    .job-hunt-easy-btn {
       pointer-events: all;
       display: inline-flex;
       align-items: center;
@@ -300,9 +300,9 @@ function attachFillButton(field: HTMLElement) {
       white-space: nowrap;
       line-height: 1;
     }
-    .fillr-btn:hover { opacity: 0.9; transform: scale(1.03); }
-    .fillr-btn:disabled { opacity: 0.6; cursor: wait; }
-    .fillr-btn.loading::after {
+    .job-hunt-easy-btn:hover { opacity: 0.9; transform: scale(1.03); }
+    .job-hunt-easy-btn:disabled { opacity: 0.6; cursor: wait; }
+    .job-hunt-easy-btn.loading::after {
       content: '';
       width: 10px;
       height: 10px;
@@ -315,7 +315,7 @@ function attachFillButton(field: HTMLElement) {
   `
 
   const button = document.createElement('button')
-  button.className = 'fillr-btn'
+  button.className = 'job-hunt-easy-btn'
   
   // Set initial label based on field content
   const hasContent = field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement ? !!field.value?.trim() : !!field.textContent?.trim()
@@ -373,8 +373,8 @@ function attachFillButton(field: HTMLElement) {
   resizeObserver.observe(field)
 
   // Store references for cleanup
-  field.dataset.fillrButtonId = fieldId
-  ;(wrapper as any)._fillrButton = button
+  field.dataset.jobHuntEasyButtonId = fieldId
+  ;(wrapper as any)._jobHuntEasyButton = button
   ;(wrapper as any)._fieldId = fieldId
 
   // Clean up if field is removed from DOM
@@ -489,9 +489,9 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
 function resetButton(fieldId: string, success: boolean = false) {
   const wrapper = wrapperRegistry.get(fieldId) as any
   const field = fieldRegistry.get(fieldId) as HTMLElement | undefined
-  if (!wrapper?._fillrButton || !field) return
+  if (!wrapper?._jobHuntEasyButton || !field) return
 
-  const btn: HTMLButtonElement = wrapper._fillrButton
+  const btn: HTMLButtonElement = wrapper._jobHuntEasyButton
   
   const hasContent = field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement ? !!field.value?.trim() : !!field.textContent?.trim()
   const defaultLabel = hasContent ? `<span>↻</span> Regenerate` : `<span>✦</span> Fill with AI`
@@ -567,7 +567,7 @@ function showErrorToast(message: string) {
     font-family: system-ui; font-size: 13px;
     z-index: 2147483647; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   `
-  toast.textContent = `Fillr: ${message}`
+  toast.textContent = `Job Hunt Easy: ${message}`
   document.body.appendChild(toast)
   setTimeout(() => toast.remove(), 4000)
 }

@@ -7,7 +7,7 @@
 // RAG (Retrieval Augmented Generation).
 // ============================================================
 
-import type { ResumeChunk } from '@fillr/types'
+import type { ResumeChunk } from '@job-hunt-easy/types'
 
 // Keywords that signal which chunk type is most relevant
 const QUESTION_SIGNALS: Record<string, string[]> = {

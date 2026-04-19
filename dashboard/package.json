@@ -1,5 +1,5 @@
 {
-  "name": "fillr-dashboard",
+  "name": "job-hunt-easy-dashboard",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.0.0",
-    "@fillr/types": "*",
+    "@job-hunt-easy/types": "*",
     "@supabase/supabase-js": "^2.43.0",
     "next": "14.2.3",
     "react": "^18.3.0",

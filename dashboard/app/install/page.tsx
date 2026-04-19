@@ -24,7 +24,7 @@ export default function InstallExtensionPage() {
         
         <p className="text-slate-400 text-lg mb-10 leading-relaxed font-light">
           You're just one click away from never typing a job application manually again. 
-          Install the Fillr Chrome extension to get started.
+          Install the Job Hunt Easy Chrome extension to get started.
         </p>
 
         <a 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { SUPPORTED_MODELS } from '@fillr/types'
+import { SUPPORTED_MODELS } from '@job-hunt-easy/types'
 
 // ─── CORS for Chrome Extension requests ────────────────────
 function corsHeaders(req: Request) {
@@ -178,8 +178,8 @@ async function handleOpenRouter({
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-      'HTTP-Referer': 'https://fillr.app',
-      'X-Title': 'Fillr SaaS',
+      'HTTP-Referer': 'https://job-hunt-easy-dashboard.vercel.app',
+      'X-Title': 'Job Hunt Easy SaaS',
     },
     body: JSON.stringify({
       model,

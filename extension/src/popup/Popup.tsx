@@ -26,7 +26,7 @@ function Popup() {
       {/* Header */}
       <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100">
         <span className="text-indigo-600 text-lg">✦</span>
-        <span className="font-semibold text-gray-900">Fillr</span>
+        <span className="font-semibold text-gray-900">Job Hunt Easy</span>
         <span className="ml-auto text-xs text-gray-400">AI Form Filler</span>
       </div>
 
@@ -76,7 +76,7 @@ function Popup() {
       {/* Footer */}
       <div className="px-4 py-2 border-t border-gray-100 text-xs text-gray-400 text-center space-y-0.5 pb-3">
         <div>Resume stays on your device. Never uploaded.</div>
-        <div className="text-[10px] text-gray-300">by Teknotical</div>
+        <div className="text-[10px] text-gray-300">by Job Hunt Easy</div>
       </div>
     </div>
   )

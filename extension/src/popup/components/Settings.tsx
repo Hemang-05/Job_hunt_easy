@@ -1,7 +1,7 @@
 import React from 'react'
 import { useExtensionStore } from '../store'
-import { SUPPORTED_MODELS } from '@fillr/types'
-import type { AnswerTone } from '@fillr/types'
+import { SUPPORTED_MODELS } from '@job-hunt-easy/types'
+import type { AnswerTone } from '@job-hunt-easy/types'
 
 // ─── Model Selector ────────────────────────────────────────
 

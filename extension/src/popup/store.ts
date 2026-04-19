@@ -9,8 +9,8 @@
 
 import { create } from 'zustand'
 import { API_BASE_URL } from '../shared/utils'
-import type { Settings, Resume, CachedAnswer } from '@fillr/types'
-import { DEFAULT_SETTINGS } from '@fillr/types'
+import type { Settings, Resume, CachedAnswer } from '@job-hunt-easy/types'
+import { DEFAULT_SETTINGS } from '@job-hunt-easy/types'
 
 interface ExtensionStore {
   // State
@@ -42,7 +42,7 @@ export const useExtensionStore = create<ExtensionStore>((set, get) => ({
       const data = await res.json()
       currentUserId = data.userId
     } catch (err) {
-      console.debug('[Fillr] Could not fetch current user, falling back to local-only mode:', err)
+      console.debug('[Job Hunt Easy] Could not fetch current user, falling back to local-only mode:', err)
     }
 
     const local = await chrome.storage.local.get({ resume: null, answerCache: [] })
@@ -54,7 +54,7 @@ export const useExtensionStore = create<ExtensionStore>((set, get) => ({
     // 2. Enforce account isolation if logged in
     if (currentUserId && resume) {
       if (resume.userId && resume.userId !== currentUserId) {
-        console.warn('[Fillr] Account mismatch! Clearing local resume.')
+        console.warn('[Job Hunt Easy] Account mismatch! Clearing local resume.')
         resume = null
         answerCache = []
         await chrome.storage.local.set({ resume: null, answerCache: [] })

@@ -24,7 +24,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@fillr/types": ["../packages/types/src"]
+      "@job-hunt-easy/types": ["../packages/types/src"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts"]

@@ -11,7 +11,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@fillr/types': path.resolve(__dirname, '../packages/types/src'),
+      '@job-hunt-easy/types': path.resolve(__dirname, '../packages/types/src'),
       '@': path.resolve(__dirname, './src'),
     },
   },

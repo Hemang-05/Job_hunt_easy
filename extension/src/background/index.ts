@@ -16,8 +16,8 @@ import type {
   CachedAnswer,
   ResumeChunk,
   Settings,
-} from '@fillr/types'
-import { DEFAULT_SETTINGS, FREE_GENERATION_LIMIT } from '@fillr/types'
+} from '@job-hunt-easy/types'
+import { DEFAULT_SETTINGS, FREE_GENERATION_LIMIT } from '@job-hunt-easy/types'
 import { hashQuestion, normalizeQuestion, API_BASE_URL } from '../shared/utils'
 import { buildPrompt } from '../shared/promptBuilder'
 import { scoreChunks } from '../shared/chunkScorer'
@@ -61,7 +61,7 @@ async function handleFillRequest(
     if (!resume) {
       sendToTab(tabId, {
         type: 'ERROR',
-        payload: { fieldId, code: 'RESUME_NOT_FOUND', message: 'Upload your resume in Fillr settings first' },
+        payload: { fieldId, code: 'RESUME_NOT_FOUND', message: 'Upload your resume in Job Hunt Easy settings first' },
       })
       return
     }
@@ -85,7 +85,7 @@ async function handleFillRequest(
         return
       }
     } catch (err) {
-      console.debug('[Fillr] Auth check failed (offline?), proceeding with local resume:', err)
+      console.debug('[Job Hunt Easy] Auth check failed (offline?), proceeding with local resume:', err)
     }
 
     // Step 3: Check cache
@@ -158,7 +158,7 @@ async function handleFillRequest(
     })
   } catch (err) {
     const error = err as Error
-    console.error('[Fillr] handleFillRequest error:', error.message)
+    console.error('[Job Hunt Easy] handleFillRequest error:', error.message)
 
     sendToTab(tabId, {
       type: 'ERROR',
@@ -188,7 +188,7 @@ async function streamFromAPI({
   fieldId: string
   onComplete: (fullAnswer: string) => Promise<void>
 }) {
-  console.debug('[Fillr] Calling /api/generate with model:', settings.model)
+  console.debug('[Job Hunt Easy] Calling /api/generate with model:', settings.model)
 
   const response = await fetch(`${API_BASE_URL}/api/generate`, {
     method: 'POST',
@@ -206,22 +206,22 @@ async function streamFromAPI({
 
   if (!response.ok) {
     const errBody = await response.text().catch(() => '')
-    console.error('[Fillr] API error:', response.status, errBody)
+    console.error('[Job Hunt Easy] API error:', response.status, errBody)
     if (response.status === 429) {
       throw new Error('API rate limited — try again in a moment')
     }
-    throw new Error(`Fillr: API error ${response.status}`)
+    throw new Error(`Job Hunt Easy: API error ${response.status}`)
   }
 
   const contentType = response.headers.get('content-type') || ''
-  console.debug('[Fillr] Response content-type:', contentType)
+  console.debug('[Job Hunt Easy] Response content-type:', contentType)
 
   let fullAnswer = ''
 
   // ── Path A: JSON response (non-streaming) ──────────────
   if (contentType.includes('application/json')) {
     const json = await response.json()
-    console.debug('[Fillr] Got JSON response:', JSON.stringify(json).slice(0, 200))
+    console.debug('[Job Hunt Easy] Got JSON response:', JSON.stringify(json).slice(0, 200))
     const text =
       json.choices?.[0]?.message?.content ||
       json.choices?.[0]?.delta?.content ||
@@ -279,7 +279,7 @@ async function streamFromAPI({
     // If streaming produced nothing, try parsing rawBody as a single JSON blob
     // Some free OpenRouter models ignore stream:true and return plain JSON
     if (!fullAnswer && rawBody.trim()) {
-      console.debug('[Fillr] SSE produced no text. Raw body:', rawBody.slice(0, 300))
+      console.debug('[Job Hunt Easy] SSE produced no text. Raw body:', rawBody.slice(0, 300))
       try {
         // Try to find any data: line
         const dataLine = rawBody.split('\n').find(l => l.startsWith('data:') && !l.includes('[DONE]'))
@@ -298,21 +298,21 @@ async function streamFromAPI({
           })
         }
       } catch {
-        console.error('[Fillr] Could not parse API response. Raw:', rawBody.slice(0, 300))
+        console.error('[Job Hunt Easy] Could not parse API response. Raw:', rawBody.slice(0, 300))
       }
     }
   }
 
   // ── Final: send result or error ────────────────────────
   if (fullAnswer) {
-    console.debug('[Fillr] Stream complete. Answer length:', fullAnswer.length)
+    console.debug('[Job Hunt Easy] Stream complete. Answer length:', fullAnswer.length)
     sendToTab(tabId, {
       type: 'STREAM_DONE',
       payload: { fieldId, fullAnswer, fromCache: false },
     })
     await onComplete(fullAnswer)
   } else {
-    console.error('[Fillr] API returned empty answer')
+    console.error('[Job Hunt Easy] API returned empty answer')
     sendToTab(tabId, {
       type: 'ERROR',
       payload: {
@@ -434,7 +434,7 @@ async function evictIfNeeded(cache: CachedAnswer[]): Promise<CachedAnswer[]> {
       const removeCount = Math.floor(scored.length * 0.2)
       const kept = scored.slice(removeCount).map((s) => s.entry)
 
-      console.log(`[Fillr] Evicted ${removeCount} cache entries (storage near limit)`)
+      console.log(`[Job Hunt Easy] Evicted ${removeCount} cache entries (storage near limit)`)
       resolve(kept)
     })
   })
@@ -445,7 +445,7 @@ async function evictIfNeeded(cache: CachedAnswer[]): Promise<CachedAnswer[]> {
 function sendToTab(tabId: number, message: ExtensionMessage) {
   chrome.tabs.sendMessage(tabId, message).catch((err) => {
     // Tab may have closed — this is fine
-    console.debug('[Fillr] sendToTab failed (tab likely closed):', err.message)
+    console.debug('[Job Hunt Easy] sendToTab failed (tab likely closed):', err.message)
   })
 }
 
@@ -466,6 +466,6 @@ async function syncToDashboard(payload: {
       body: JSON.stringify(payload)
     })
   } catch (err) {
-    console.debug('[Fillr] Sync to dashboard failed:', err)
+    console.debug('[Job Hunt Easy] Sync to dashboard failed:', err)
   }
 }

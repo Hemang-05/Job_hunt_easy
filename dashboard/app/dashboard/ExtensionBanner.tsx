@@ -9,7 +9,7 @@ export default function ExtensionBanner() {
   useEffect(() => {
     // Wait for the extension's content script to inject its attribute
     const checkInstallation = () => {
-      const isInstalled = document.documentElement.hasAttribute('data-fillr-installed')
+      const isInstalled = document.documentElement.hasAttribute('data-job-hunt-easy-installed')
       setInstalled(isInstalled)
     }
 
@@ -27,7 +27,7 @@ export default function ExtensionBanner() {
       <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
       <div className="relative z-10 text-center sm:text-left">
         <h3 className="font-bold text-xl mb-1 flex items-center justify-center sm:justify-start gap-2">
-          <span>🚀</span> Install the Fillr Extension
+          <span>🚀</span> Install the Job Hunt Easy Extension
         </h3>
         <p className="text-indigo-100 text-sm">
           You need the browser extension to autofill job applications across the web.

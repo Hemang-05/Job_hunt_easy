@@ -56,7 +56,7 @@ export function sanitizeQuestion(raw: string): string {
 
   for (const pattern of INJECTION_PATTERNS) {
     if (pattern.test(text)) {
-      console.warn('[Fillr] Possible prompt injection attempt detected, sanitizing')
+      console.warn('[Job Hunt Easy] Possible prompt injection attempt detected, sanitizing')
       text = text.replace(pattern, '[removed]')
     }
   }

@@ -12,7 +12,7 @@ import * as pdfjsLib from 'pdfjs-dist'
 import workerUrl from 'pdfjs-dist/build/pdf.worker.mjs?url'
 import { useExtensionStore } from '../store'
 import { API_BASE_URL } from '../../shared/utils'
-import type { Resume, ResumeChunk, ChunkType } from '@fillr/types'
+import type { Resume, ResumeChunk, ChunkType } from '@job-hunt-easy/types'
 import { estimateSizeKb } from '../../shared/utils'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl
@@ -58,7 +58,7 @@ export function ResumeUploader() {
         const data = await res.json()
         currentUserId = data.userId
       } catch (err) {
-        console.warn('[Fillr] Could not tag resume with userId:', err)
+        console.warn('[Job Hunt Easy] Could not tag resume with userId:', err)
       }
 
       const newResume: Resume = {
@@ -79,7 +79,7 @@ export function ResumeUploader() {
       syncResumeToSupabase(newResume)
 
     } catch (err) {
-      console.error('[Fillr] PDF parse error:', err)
+      console.error('[Job Hunt Easy] PDF parse error:', err)
       setError('Could not read this PDF. Try saving it as a regular PDF (not scanned).')
       setStatus('error')
     }
@@ -214,6 +214,6 @@ async function syncResumeToSupabase(resume: Resume) {
       }),
     })
   } catch (err) {
-    console.debug('[Fillr] Resume sync to Supabase failed (non-blocking):', err)
+    console.debug('[Job Hunt Easy] Resume sync to Supabase failed (non-blocking):', err)
   }
 }

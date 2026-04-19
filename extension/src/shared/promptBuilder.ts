@@ -6,7 +6,7 @@
 // We inject safety constraints and structure directly here.
 // ============================================================
 
-import type { ResumeChunk, AnswerTone } from '@fillr/types'
+import type { ResumeChunk, AnswerTone } from '@job-hunt-easy/types'
 
 export function buildPrompt(
   question: string,

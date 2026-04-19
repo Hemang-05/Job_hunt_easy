@@ -1,5 +1,5 @@
 {
-  "name": "fillr-extension",
+  "name": "job-hunt-easy-extension",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@fillr/types": "*",
+    "@job-hunt-easy/types": "*",
     "pdfjs-dist": "^4.0.379",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",

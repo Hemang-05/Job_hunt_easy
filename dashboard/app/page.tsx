@@ -11,9 +11,9 @@ export default function LandingPage() {
       <nav className="flex items-center justify-between px-8 py-5 max-w-6xl mx-auto border-b border-white/5 backdrop-blur-md">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold tracking-tight shadow-lg shadow-indigo-500/20">
-            F
+            J
           </div>
-          <span className="font-semibold text-white tracking-tight text-xl">Fillr</span>
+          <span className="font-semibold text-white tracking-tight text-xl">Job Hunt Easy</span>
         </div>
         <div className="flex items-center gap-5">
           <SignedOut>
@@ -170,7 +170,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="text-center py-8 text-slate-500 text-sm border-t border-white/5">
-        Created by Hemang M <span className="opacity-70 font-medium">( Teknotical )</span>
+        Created by Hemang M <span className="opacity-70 font-medium">( Job Hunt Easy )</span>
       </footer>
     </main>
   )
