@@ -11,8 +11,11 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Fillr — AI Form Filler',
+  title: 'Job Hunt Easy — AI Form Filler',
   description: 'Fill any form with AI using your resume',
+  verification: {
+    google: 'SFp8QNYquB87M5k7wxv44G3bP1j5h2BbviGRwy1HHIY',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -17,7 +17,7 @@
       "16":  "icons/icon16.png",
       "32":  "icons/icon32.png"
     },
-    "default_title": "Fillr — AI Form Filler"
+    "default_title": "Job Hunt Easy — AI Form Filler"
   },
 
   "background": {
@@ -45,7 +45,6 @@
   "host_permissions": [
     "https://openrouter.ai/*",
     "http://localhost:3000/*",
-    "https://fillr.app/*",
     "https://job-hunt-easy-dashboard.vercel.app/*"
   ],
 
