@@ -23,7 +23,8 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@job-hunt-easy/types": ["../packages/types/src"]
     }
   },
   "include": [
