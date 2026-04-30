@@ -193,8 +193,8 @@ export interface OpenRouterConfig {
 // Models we support — only models with active API keys are enabled
 export const SUPPORTED_MODELS = [
   {
-    id: 'qwen/qwen3-235b-a22b:free',
-    label: 'Qwen 3 235B (Free)',
+    id: 'qwen/qwen3-next-80b-a3b-instruct:free',
+    label: 'Qwen 3 Next 80B (Free)',
     provider: 'openrouter' as AIProvider,
     free: true,
   },
@@ -227,7 +227,7 @@ export const SUPPORTED_MODELS = [
 ] as const
 
 export const DEFAULT_SETTINGS: Settings = {
-  model: 'qwen/qwen3-235b-a22b:free',
+  model: 'qwen/qwen3-next-80b-a3b-instruct:free',
   enabled: true,
   tone: 'professional',
   maxAnswerLength: 300,

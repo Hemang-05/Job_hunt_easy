@@ -237,6 +237,45 @@ export function extractQuestion(el: HTMLElement): string {
     if (parentText) labelText = parentText.trim()
   }
 
+  // Strategy 7: Walk up the tree and look for previous siblings with text
+  if (!labelText) {
+    let current: HTMLElement | null = el
+    // Only go up a few levels to avoid grabbing unrelated page headers
+    for (let i = 0; i < 4; i++) {
+      if (!current || current === document.body) break
+      
+      // Check previous siblings
+      let prev = current.previousElementSibling as HTMLElement | null
+      while (prev) {
+        const text = prev.innerText?.trim() || prev.textContent?.trim()
+        // Ignore single characters like just an asterisk "*"
+        if (text && text.length > 2) {
+          labelText = text
+          break
+        }
+        prev = prev.previousElementSibling as HTMLElement | null
+      }
+      if (labelText) break
+      
+      current = current.parentElement
+    }
+  }
+
+  // Strategy 8: Check for preceding text nodes directly within the parent
+  if (!labelText) {
+    let current: Node | null = el
+    while (current) {
+      current = current.previousSibling
+      if (current && current.nodeType === Node.TEXT_NODE) {
+        const text = current.textContent?.trim()
+        if (text && text.length > 2) {
+          labelText = text
+          break
+        }
+      }
+    }
+  }
+
   // Also extract the placeholder independently
   const placeholder = (el as HTMLInputElement | HTMLTextAreaElement).placeholder || ''
 
