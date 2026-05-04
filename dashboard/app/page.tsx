@@ -2,8 +2,33 @@ import Link from 'next/link'
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 
 export default function LandingPage() {
+  const platforms = [
+    { name: 'Workday', style: 'italic font-black tracking-tighter' },
+    { name: 'Greenhouse', style: 'font-bold tracking-tight' },
+    { name: 'Lever', style: 'font-medium tracking-wide' },
+    { name: 'LinkedIn', style: 'font-extrabold' },
+    { name: 'Indeed', style: 'font-black tracking-tighter italic' },
+    { name: 'Ashby', style: 'font-semibold tracking-tight' },
+    { name: 'Bullhorn', style: 'font-bold' },
+    { name: 'SmartRecruiters', style: 'font-black tracking-tight' },
+  ]
+
   return (
     <main className="min-h-screen bg-slate-950 font-sans selection:bg-indigo-500/30 text-slate-200 overflow-x-hidden">
+      {/* Custom Marquee Animation */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes scroll {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-scroll {
+          animation: scroll 30s linear infinite;
+        }
+        .animate-scroll:hover {
+          animation-play-state: paused;
+        }
+      `}} />
+
       {/* Dynamic Background Pattern */}
       <div className="absolute inset-0 -z-10 h-full w-full bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
 
@@ -103,17 +128,30 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Platform Support Section */}
-      <div className="max-w-6xl mx-auto px-8 py-16 border-y border-white/5 text-center">
-        <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-10">Works seamlessly with</p>
-        <div className="flex flex-wrap justify-center items-center gap-x-16 gap-y-10 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-           <div className="text-2xl font-bold text-white tracking-tighter italic">Workday</div>
-           <div className="text-2xl font-bold text-white tracking-tighter">Greenhouse</div>
-           <div className="text-2xl font-bold text-white tracking-tighter">Lever</div>
-           <div className="text-2xl font-bold text-white tracking-tighter">LinkedIn</div>
-           <div className="text-2xl font-bold text-white tracking-tighter">Indeed</div>
-           <div className="text-2xl font-bold text-white tracking-tighter opacity-60">50+ More</div>
+      {/* Platform Support Section (Infinite Marquee) */}
+      <div className="w-full py-16 border-y border-white/5 bg-white/[0.01] overflow-hidden relative">
+        <p className="text-center text-sm font-semibold text-slate-500 uppercase tracking-widest mb-10">Works seamlessly with</p>
+        
+        <div className="flex whitespace-nowrap overflow-hidden group">
+          <div className="flex gap-20 items-center animate-scroll">
+            {/* First Set of Logos */}
+            {platforms.map((p, i) => (
+              <div key={i} className={`text-3xl text-white/40 hover:text-white transition-all cursor-default select-none ${p.style}`}>
+                {p.name}
+              </div>
+            ))}
+            {/* Duplicate Set for Infinite Loop */}
+            {platforms.map((p, i) => (
+              <div key={`dup-${i}`} className={`text-3xl text-white/40 hover:text-white transition-all cursor-default select-none ${p.style}`}>
+                {p.name}
+              </div>
+            ))}
+          </div>
         </div>
+        
+        {/* Faded Edges for Smooth Look */}
+        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-slate-950 to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-slate-950 to-transparent z-10 pointer-events-none"></div>
       </div>
 
       {/* How it works */}
