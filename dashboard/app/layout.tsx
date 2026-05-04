@@ -5,14 +5,14 @@
 
 import type { Metadata } from 'next'
 import { ClerkProvider } from '@clerk/nextjs'
-import { Inter } from 'next/font/google'
+import { Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const plusJakartaSans = Plus_Jakarta_Sans({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Job Hunt Easy — AI Form Filler',
-  description: 'Fill any form with AI using your resume',
+  title: 'Job Hunt Easy — AI Autofill for Job Applications | Workday, Greenhouse, Lever',
+  description: 'Autofill job applications in seconds using your resume. Job Hunt Easy\'s Chrome extension works on Workday, Greenhouse, Lever & more. Free to start.',
   verification: {
     google: 'SFp8QNYquB87M5k7wxv44G3bP1j5h2BbviGRwy1HHIY',
   },
@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={inter.className}>
+        <body className={plusJakartaSans.className}>
           {children}
         </body>
       </html>
