@@ -11,6 +11,7 @@ import './globals.css'
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800', '900'] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://jobhunteasy.com'),
   title: 'Job Hunt Easy — AI Autofill for Job Applications | Workday, Greenhouse, Lever',
   description: 'Autofill job applications in seconds using your resume. Works on Workday, Greenhouse, Lever & more. Free Chrome extension.',
   verification: {

@@ -181,7 +181,7 @@ async function handleOpenRouter({
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-      'HTTP-Referer': 'https://job-hunt-easy-dashboard.vercel.app',
+      'HTTP-Referer': 'https://jobhunteasy.com',
       'X-Title': 'Job Hunt Easy SaaS',
     },
     body: JSON.stringify({
