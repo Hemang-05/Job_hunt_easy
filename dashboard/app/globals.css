@@ -16,12 +16,135 @@
   }
 }
 
+@layer components {
+  /* Glass tile — floats over solid background */
+  .glass-tile {
+    background: linear-gradient(
+      160deg,
+      rgba(255,255,255,0.12) 0%,
+      rgba(255,255,255,0.05) 100%
+    );
+    backdrop-filter: blur(32px) saturate(120%);
+    -webkit-backdrop-filter: blur(32px) saturate(120%);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-bottom-color: rgba(255,255,255,0.05);
+    border-right-color: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    box-shadow:
+      0 2px 0 rgba(255,255,255,0.1) inset,
+      0 20px 60px rgba(0,0,0,0.4),
+      0 1px 0 rgba(255,255,255,0.05);
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease, border-color 0.35s ease;
+  }
+  .glass-tile:hover {
+    border-color: rgba(255,255,255,0.22);
+    box-shadow:
+      0 2px 0 rgba(255,255,255,0.15) inset,
+      0 30px 80px rgba(0,0,0,0.5),
+      0 1px 0 rgba(255,255,255,0.08);
+  }
+
+  .glass-pill {
+    background: rgba(255,255,255,0.10);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 999px;
+  }
+
+  /* Navbar pill when scrolled */
+  .nav-scrolled {
+    background: linear-gradient(
+      160deg,
+      rgba(255,255,255,0.12) 0%,
+      rgba(255,255,255,0.05) 100%
+    );
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 999px;
+    box-shadow: 0 12px 40px rgba(8,6,22,0.4);
+  }
+
+  /* White CTA button */
+  .cta-white {
+    @apply bg-white rounded-[14px] font-medium transition-all shadow-none;
+    color: #1A1953;
+  }
+  .cta-white:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 10px 40px rgba(255,255,255,0.25);
+  }
+  .cta-white:active { @apply scale-[0.97]; }
+
+  .step-num {
+    @apply absolute top-6 right-8 text-[160px] font-black pointer-events-none select-none leading-none;
+    color: rgba(255, 255, 255, 0.035);
+  }
+}
+
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  @apply bg-[#080616] text-[#E0E4F5] antialiased;
+}
+
+/* ─── SLEEK GLASSY SCROLLBAR ─── */
+::-webkit-scrollbar {
+  width: 14px; /* Increased width to accommodate 'margin' */
+  height: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  background-clip: padding-box; /* Crucial for the border trick */
+  border: 4px solid transparent; /* This acts as the margin */
+  border-radius: 20px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Firefox support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+/* Hide scrollbar arrows */
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* ─── CLERK DARK MODE OVERRIDES ─── */
+.cl-rootBox, .cl-userProfile-root {
+  --cl-color-text: #ffffff !important;
+  --cl-color-text-secondary: rgba(255, 255, 255, 0.5) !important;
+}
+
+.cl-userPreviewSecondaryIdentifier, 
+.cl-identityPreviewText,
+.cl-formFieldLabel,
+.cl-headerSubtitle,
+.cl-text-muted {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.cl-userPreviewMainIdentifier,
+.cl-headerTitle,
+.cl-profileSectionTitleText,
+.cl-formButtonPrimary {
+  color: white !important;
+}
+
+.cl-profileSectionTitleText {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.cl-navbarMobileMenuButton, .cl-accordionTriggerButton {
+  color: white !important;
 }

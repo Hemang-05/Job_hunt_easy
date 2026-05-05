@@ -11,17 +11,17 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
 // Define which routes require authentication
-// NOTE: /api/generate and /api/sync are excluded because the Chrome Extension
-// service worker cannot send Clerk cookies. Those routes handle their own security.
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
-  '/api/answers(.*)',
+  '/api/answers((?!/sync).*)',
   '/api/applications(.*)'
 ])
 
 const isPublicApiRoute = createRouteMatcher([
   '/api/generate(.*)',
   '/api/sync(.*)',
+  '/api/answers/sync',
+  '/api/resume/sync'
 ])
 
 export default clerkMiddleware((auth, req) => {

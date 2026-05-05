@@ -1,140 +1,88 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { createUserClient } from '@/lib/supabase/server'
+import { FileText, Upload, CheckCircle } from 'lucide-react'
 
 export default async function ResumePage() {
   const user = await currentUser()
-  let resume = null
+  let resumeName: string | null = null
 
   try {
     const { client: supabase } = await createUserClient()
     const { data } = await supabase
       .from('resumes')
-      .select('*')
+      .select('file_name')
       .eq('user_id', user!.id)
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle()
     
-    if (data) resume = data
+    if (data) resumeName = data.file_name
   } catch (err) {
     console.error('[Dashboard] Error fetching resume:', err)
   }
 
-  if (!resume) {
-    return (
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Your Resume</h1>
-        <div className="bg-white rounded-2xl p-12 text-center border border-gray-100 shadow-sm">
-          <div className="text-4xl mb-4">📄</div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">No resume uploaded</h2>
-          <p className="text-gray-500 mb-6 max-w-sm mx-auto">
-            Fillr works by reading your resume. Upload your PDF directly in the Fillr Chrome Extension.
-          </p>
-          <div className="inline-block bg-indigo-50 text-indigo-700 text-sm font-medium px-4 py-2 rounded-lg">
-            Open the Chrome Extension popup to upload →
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  // Group chunks by type
-  const chunksByType = (resume.chunks || []).reduce((acc: Record<string, any[]>, chunk: any) => {
-    const t = chunk.type || 'other'
-    if (!acc[t]) acc[t] = []
-    acc[t].push(chunk)
-    return acc
-  }, {})
-
-  const chunkTypes = ['summary', 'experience', 'education', 'skills', 'projects', 'other']
-
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div className="flex items-center justify-between border-b border-gray-100 pb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Your Resume</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            This is the data Fillr uses to answer questions on your behalf.
-          </p>
-        </div>
-        <div className="group relative inline-block">
-          <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors">
-            Update Resume
-          </button>
-          {/* Tooltip on hover saying to use the extension */}
-          <div className="absolute top-full right-0 mt-2 w-64 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
-            Open the Fillr Chrome extension popup in your browser toolbar to upload a new PDF.
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl p-5 border border-gray-100">
-          <div className="text-sm font-medium text-gray-500">File Name</div>
-          <div className="text-lg font-semibold text-gray-900 mt-1 truncate" title={resume.file_name}>
-            {resume.file_name}
-          </div>
-        </div>
-        <div className="bg-white rounded-xl p-5 border border-gray-100">
-          <div className="text-sm font-medium text-gray-500">Version</div>
-          <div className="text-lg font-semibold text-gray-900 mt-1">v{resume.version}</div>
-        </div>
-        <div className="bg-white rounded-xl p-5 border border-gray-100">
-          <div className="text-sm font-medium text-gray-500">Size</div>
-          <div className="text-lg font-semibold text-gray-900 mt-1">{resume.size_kb} KB</div>
-        </div>
-        <div className="bg-white rounded-xl p-5 border border-gray-100">
-          <div className="text-sm font-medium text-gray-500">Parsed Chunks</div>
-          <div className="text-lg font-semibold text-gray-900 mt-1">
-            {resume.chunks?.length || 0}
-          </div>
-        </div>
-      </div>
-
+    <div className="max-w-5xl space-y-8">
       <div>
-        <h2 className="text-lg font-bold text-gray-900 mb-4">Parsed Semantic Data</h2>
-        <div className="space-y-4">
-          {chunkTypes.map((type) => {
-            const chunks = chunksByType[type]
-            if (!chunks || chunks.length === 0) return null
-
-            return (
-              <details key={type} className="bg-white rounded-xl border border-gray-100 overflow-hidden [&_summary::-webkit-details-marker]:hidden flex flex-col group">
-                <summary className="cursor-pointer bg-gray-50 px-5 py-4 font-semibold text-gray-900 flex items-center justify-between select-none">
-                  <div className="flex items-center gap-3">
-                    <span className="capitalize">{type}</span>
-                    <span className="bg-gray-200 text-gray-600 text-xs font-medium px-2 py-0.5 rounded-full">
-                      {chunks.length} chunks
-                    </span>
-                  </div>
-                  <span className="text-gray-400 group-open:rotate-180 transform transition-transform duration-200">
-                    ▼
-                  </span>
-                </summary>
-                
-                <div className="p-5 border-t border-gray-100 space-y-4 bg-white">
-                  {chunks.map((chunk, idx) => (
-                    <div key={chunk.id || idx} className="pb-4 border-b border-gray-50 last:border-0 last:pb-0">
-                      <div className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
-                        {chunk.content}
-                      </div>
-                      {chunk.keywords && chunk.keywords.length > 0 && (
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {chunk.keywords.map((kw: string, i: number) => (
-                            <span key={i} className="bg-indigo-50 text-indigo-700 text-[10px] font-medium px-2 py-0.5 rounded uppercase tracking-wide">
-                              {kw}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </details>
-            )
-          })}
-        </div>
+        <h1 className="text-3xl font-black text-white tracking-tight">Resume</h1>
+        <p className="text-white/50 mt-2 text-sm font-medium">
+          Your resume is processed locally in the extension and never stored on our servers.
+        </p>
       </div>
+
+      {resumeName ? (
+        /* ── Resume Uploaded State ── */
+        <div className="glass-tile p-10">
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 bg-indigo-500/10 rounded-[20px] flex items-center justify-center border border-indigo-500/15 shadow-[0_0_20px_rgba(99,102,241,0.1)]">
+              <CheckCircle className="w-8 h-8 text-indigo-400" />
+            </div>
+            <div>
+              <div className="text-xs font-black text-indigo-400 uppercase tracking-widest mb-2">
+                Resume Active
+              </div>
+              <div className="text-xl font-bold text-white flex items-center gap-3">
+                <FileText className="w-5 h-5 text-white/30" />
+                {resumeName}
+              </div>
+              <p className="text-white/40 text-sm mt-2 font-medium">
+                To update your resume, open the Job Hunt Easy extension popup and upload a new PDF.
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* ── No Resume State ── */
+        <div className="glass-tile p-14 text-center">
+          <div className="w-20 h-20 bg-white/5 rounded-[28px] flex items-center justify-center mx-auto mb-8">
+            <Upload className="w-10 h-10 text-white/20" />
+          </div>
+          <h2 className="text-2xl font-black text-white mb-3">No resume uploaded yet</h2>
+          <p className="text-white/40 max-w-md mx-auto font-medium leading-relaxed mb-10">
+            Upload your resume through the extension popup. It stays on your device — we never store it.
+          </p>
+
+          <div className="bg-white/5 rounded-3xl p-8 max-w-md mx-auto text-left border border-white/5">
+            <h3 className="text-xs font-black text-indigo-400 uppercase tracking-widest mb-6">
+              How to upload your resume
+            </h3>
+            <ol className="space-y-5 text-white/70 text-sm font-medium">
+              <li className="flex gap-4">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-black text-xs">1</span>
+                <span>Click the <b className="text-white">Job Hunt Easy</b> icon in your browser toolbar.</span>
+              </li>
+              <li className="flex gap-4">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-black text-xs">2</span>
+                <span>Click <b className="text-white">Upload Resume</b> and select your PDF file.</span>
+              </li>
+              <li className="flex gap-4">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-black text-xs">3</span>
+                <span>That&apos;s it! The AI reads your resume and you&apos;re ready to autofill.</span>
+              </li>
+            </ol>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

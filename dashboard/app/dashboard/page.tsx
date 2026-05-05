@@ -4,6 +4,7 @@ import { createUserClient } from '@/lib/supabase/server'
 import Loading from './loading'
 import ExtensionBanner from './ExtensionBanner'
 import Link from 'next/link'
+import { Sparkles, Zap, Star } from 'lucide-react'
 
 export default async function DashboardPage() {
   return (
@@ -71,65 +72,69 @@ async function DashboardContent() {
   }
 
   return (
-    <div className="max-w-4xl space-y-8">
+    <div className="max-w-5xl space-y-10">
       <ExtensionBanner />
+      
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
-          Welcome back, {user?.firstName} 👋
+        <h1 className="text-3xl font-black text-white tracking-tight">
+          Welcome back, {user?.firstName}
         </h1>
-        <p className="text-gray-500 mt-1 text-sm">
-          Here's what Fillr has saved you this month.
+        <p className="text-white/50 mt-2 text-sm font-medium">
+          Here&apos;s how Job Hunt Easy is supercharging your applications.
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { label: 'Saved answers',  value: totalAnswers,  sub: 'total in library' },
-          { label: 'Total uses',     value: totalUses,           sub: 'fields filled' },
-          { label: 'Top question',   value: topAnswer?.used_count ?? 0, sub: topAnswer?.question_text ? topAnswer.question_text.slice(0, 24) + '…' : 'none yet' },
-        ].map(({ label, value, sub }) => (
-          <div key={label} className="bg-white rounded-xl p-5 border border-gray-100">
-            <div className="text-3xl font-bold text-gray-900">{value}</div>
-            <div className="text-sm font-medium text-gray-700 mt-1">{label}</div>
-            <div className="text-xs text-gray-400 mt-0.5 truncate">{sub}</div>
+          { label: 'Saved answers',  value: totalAnswers,  sub: 'Total in library', icon: <Sparkles className="w-5 h-5 text-indigo-400" /> },
+          { label: 'Total uses',     value: totalUses,           sub: 'Fields filled', icon: <Zap className="w-5 h-5 text-indigo-400" /> },
+          { label: 'Top question',   value: topAnswer?.used_count ?? 0, sub: topAnswer?.question_text ? topAnswer.question_text.slice(0, 20) + '…' : 'None yet', icon: <Star className="w-5 h-5 text-indigo-400" /> },
+        ].map(({ label, value, sub, icon }) => (
+          <div key={label} className="glass-tile p-6 relative group">
+            <div className="absolute top-6 right-6 opacity-20 group-hover:opacity-100 transition-opacity">
+              {icon}
+            </div>
+            <div className="text-4xl font-black text-white mb-1">{value}</div>
+            <div className="text-sm font-bold text-white/80">{label}</div>
+            <div className="text-xs text-white/40 mt-1 font-medium">{sub}</div>
           </div>
         ))}
       </div>
 
       {/* Recent answers */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-gray-900">Recent answers</h2>
-          <Link href="/dashboard/answers" className="text-sm text-indigo-600 hover:underline">
-            View all →
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-white tracking-tight">Recent Answers</h2>
+          <Link href="/dashboard/answers" className="text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
+            View all library →
           </Link>
         </div>
 
         {answers && answers.length > 0 ? (
-          <div className="space-y-3">
+          <div className="grid gap-4">
             {answers.map((answer) => (
               <div
                 key={answer.id}
-                className="bg-white rounded-xl p-4 border border-gray-100"
+                className="glass-tile p-5 hover:translate-x-1"
               >
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start justify-between gap-6">
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-gray-900 truncate">
+                    <div className="text-sm font-bold text-white mb-1 truncate">
                       {answer.question_text}
                     </div>
-                    <div className="text-xs text-gray-400 mt-1 line-clamp-2">
+                    <div className="text-xs text-white/50 line-clamp-1 font-medium leading-relaxed">
                       {answer.answer}
                     </div>
                   </div>
                   <div className="flex-shrink-0 text-right">
-                    <div className="text-xs font-medium text-indigo-600">
-                      {answer.used_count}×
+                    <div className="text-xs font-black text-indigo-400 uppercase tracking-wider">
+                      {answer.used_count} uses
                     </div>
-                    <div className="text-xs text-gray-400 mt-0.5">
+                    <div className="text-[10px] text-white/30 mt-1 font-bold uppercase tracking-tighter">
                       {answer.page_url
                         ? new URL(answer.page_url).hostname
-                        : 'unknown site'}
+                        : 'Unknown site'}
                     </div>
                   </div>
                 </div>
@@ -137,12 +142,14 @@ async function DashboardContent() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-xl p-8 border border-gray-100 text-center">
-            <div className="text-3xl mb-3">✦</div>
-            <div className="text-sm font-medium text-gray-700">No answers yet</div>
-            <div className="text-xs text-gray-400 mt-1">
-              Open a job application and click the Fillr button on any form field.
+          <div className="glass-tile p-12 text-center">
+            <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Sparkles className="w-8 h-8 text-white/20" />
             </div>
+            <div className="text-lg font-bold text-white">No answers yet</div>
+            <p className="text-sm text-white/40 mt-2 max-w-xs mx-auto font-medium">
+              Open any job application and use the Job Hunt Easy button to start saving time.
+            </p>
           </div>
         )}
       </div>

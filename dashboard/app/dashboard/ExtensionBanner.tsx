@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Zap } from 'lucide-react'
 
 export default function ExtensionBanner() {
   const [installed, setInstalled] = useState<boolean | null>(null)
@@ -23,19 +24,21 @@ export default function ExtensionBanner() {
   if (installed === null || installed === true) return null
 
   return (
-    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 mb-8 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-indigo-500/25 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+    <div className="glass-tile p-8 mb-10 flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden group">
+      {/* Animated glow effect */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none group-hover:bg-indigo-600/20 transition-colors duration-700"></div>
+      
       <div className="relative z-10 text-center sm:text-left">
-        <h3 className="font-bold text-xl mb-1 flex items-center justify-center sm:justify-start gap-2">
-          <span>🚀</span> Install the Job Hunt Easy Extension
+        <h3 className="font-black text-2xl text-white mb-2 flex items-center justify-center sm:justify-start gap-3">
+          <Zap className="w-6 h-6 text-indigo-400 fill-indigo-400" /> Install the Job Hunt Easy Extension
         </h3>
-        <p className="text-indigo-100 text-sm">
-          You need the browser extension to autofill job applications across the web.
+        <p className="text-white/50 text-sm font-medium max-w-md">
+          You need the browser extension to autofill job applications across the web. Get it now to start applying 5× faster.
         </p>
       </div>
       <Link 
         href="/install" 
-        className="relative z-10 shrink-0 bg-white text-indigo-700 px-6 py-3 rounded-full font-bold hover:bg-slate-50 transition-all shadow-md hover:shadow-lg hover:scale-105 active:scale-95 text-sm"
+        className="cta-white relative z-10 shrink-0 px-8 py-4 text-base font-bold"
       >
         Install Now
       </Link>
