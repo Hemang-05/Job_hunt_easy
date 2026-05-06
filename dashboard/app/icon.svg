@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <!-- Solid background block for high visibility in dark and light modes -->
+  <rect width="24" height="24" rx="6" fill="#2F2FE4" />
+  <!-- Suitcase body -->
+  <rect x="4" y="9" width="16" height="11" rx="2" ry="2" fill="#ffffff" />
+  <!-- Suitcase handle -->
+  <path d="M15 9V6a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v3" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+  <!-- Suitcase center latch line -->
+  <line x1="4" y1="14" x2="20" y2="14" stroke="#2F2FE4" stroke-width="1.5" />
+</svg>
