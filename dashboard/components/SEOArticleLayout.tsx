@@ -27,7 +27,7 @@ export function SEOArticleLayout({ children, title, subtitle, publishDate }: SEO
       <div className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_top,rgba(22,46,147,0.15)_0%,transparent_70%)]" />
       
       {/* Navbar */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'py-4 px-6 bg-[#080616]/80 backdrop-blur-md border-b border-white/10' : 'py-6 px-6'}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'py-4 px-6 bg-[#080616]/90 backdrop-blur-md shadow-lg shadow-black/20' : 'py-6 px-6'}`}>
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="w-8 h-8 rounded-full bg-indigo-600/20 flex items-center justify-center text-indigo-400 font-black text-sm border border-indigo-500/30">
@@ -37,7 +37,7 @@ export function SEOArticleLayout({ children, title, subtitle, publishDate }: SEO
           </Link>
           <div className="flex items-center gap-6 text-sm font-semibold">
             <SignedOut>
-              <Link href="/sign-up?redirect_url=/install" className="bg-white text-[#080616] px-5 py-2 rounded-xl font-bold hover:bg-gray-100 transition-colors">
+              <Link href="/sign-up?redirect_url=/install" className="bg-white text-[#080616] px-6 py-2.5 rounded-2xl font-bold hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(255,255,255,0.25)] transition-all">
                 Add to Chrome — Free
               </Link>
             </SignedOut>

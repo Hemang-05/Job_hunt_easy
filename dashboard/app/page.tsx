@@ -554,6 +554,7 @@ export default function LandingPage() {
           >
             <span>© {new Date().getFullYear()} Job Hunt Easy. AI job application autofill · Workday · Greenhouse · Lever</span>
             <div className="flex gap-5">
+              <Link href="/blog" className="hover:text-white transition-colors">Blog & Resources</Link>
               <a href="#" className="hover:text-white transition-colors">Twitter</a>
               <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
             </div>
