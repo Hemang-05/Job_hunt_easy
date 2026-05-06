@@ -37,7 +37,7 @@ export function SEOArticleLayout({ children, title, subtitle, publishDate }: SEO
           </Link>
           <div className="flex items-center gap-6 text-sm font-semibold">
             <SignedOut>
-              <Link href="/sign-up?redirect_url=/install" className="bg-white text-[#080616] px-6 py-2.5 rounded-2xl font-bold hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(255,255,255,0.25)] transition-all">
+              <Link href="/sign-up?redirect_url=/install" className="bg-white px-6 py-2.5 rounded-2xl font-bold hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(255,255,255,0.25)] transition-all" style={{ color: '#080616' }}>
                 Add to Chrome — Free
               </Link>
             </SignedOut>
