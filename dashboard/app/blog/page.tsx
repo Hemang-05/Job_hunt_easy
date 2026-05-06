@@ -52,22 +52,22 @@ export default function BlogIndexPage() {
           <Link 
             key={i} 
             href={article.href}
-            className="group relative flex flex-col p-6 sm:p-8 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-3xl transition-all duration-300 hover:-translate-y-1 shadow-lg shadow-black/5"
+            className="group relative flex flex-col p-6 sm:p-8 bg-indigo-600/5 hover:bg-indigo-600/10 border border-indigo-500/10 hover:border-indigo-500/30 rounded-3xl transition-all duration-300 hover:-translate-y-1 shadow-lg shadow-black/5"
           >
-            <div className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-white/20 transition-all">
-              <ArrowRight className="w-5 h-5 text-white group-hover:text-white" />
+            <div className="absolute top-6 right-6 w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all">
+              <ArrowRight className="w-5 h-5 text-indigo-400 group-hover:text-indigo-300" />
             </div>
             
             <div className="flex items-center gap-2 mb-4">
-              <BookOpen className="w-4 h-4 text-white/70" />
-              <span className="text-xs font-bold uppercase tracking-widest text-white/70">{article.tag}</span>
+              <BookOpen className="w-4 h-4 text-indigo-400" />
+              <span className="text-xs font-bold uppercase tracking-widest text-indigo-400">{article.tag}</span>
             </div>
             
             <h3 className="text-xl sm:text-2xl font-black text-white mb-3 tracking-tight !mt-0 pr-12">
               {article.title}
             </h3>
             
-            <p className="text-white/70 font-medium text-sm sm:text-base leading-relaxed flex-grow !mb-0">
+            <p className="text-white/60 font-medium text-sm sm:text-base leading-relaxed flex-grow !mb-0">
               {article.description}
             </p>
           </Link>
