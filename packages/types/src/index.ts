@@ -200,19 +200,19 @@ export const SUPPORTED_MODELS = [
   },
 
   {
-    id: 'gemini-3.0-flash',
+    id: 'gemini-3.1-flash-lite-preview',
     label: 'Gemini 3 Flash (Pro)',
     provider: 'google' as AIProvider,
     free: false,
   },
   {
-    id: 'google/gemini-pro-1.5',
-    label: 'Gemini 1.5 Pro (Pro)',
-    provider: 'google' as AIProvider,
+    id: 'claude-3-5-haiku-20241022',
+    label: 'Claude 3.5 Haiku (Pro)',
+    provider: 'anthropic' as AIProvider,
     free: false,
   },
   {
-    id: 'claude-3-5-sonnet-20240620',
+    id: 'claude-3-5-sonnet-20241022',
     label: 'Claude 3.5 Sonnet (Pro)',
     provider: 'anthropic' as AIProvider,
     free: false,
