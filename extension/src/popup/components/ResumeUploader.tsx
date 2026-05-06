@@ -88,17 +88,17 @@ export function ResumeUploader() {
   return (
     <div className="space-y-3">
       {resume ? (
-        <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-100">
-          <span className="text-green-600 text-lg">✓</span>
+        <div className="flex items-start gap-3 p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 shadow-inner">
+          <span className="text-emerald-400 text-lg">✓</span>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium text-green-800 truncate">{resume.fileName}</div>
-            <div className="text-xs text-green-600 mt-0.5">
+            <div className="text-sm font-bold text-white truncate">{resume.fileName}</div>
+            <div className="text-[10px] uppercase tracking-widest text-emerald-400/80 mt-1 font-bold">
               {resume.chunks.length} sections · {resume.sizeKb}KB · v{resume.version}
             </div>
           </div>
           <button
             onClick={() => fileRef.current?.click()}
-            className="text-xs text-green-700 underline flex-shrink-0"
+            className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-300 underline flex-shrink-0 transition-colors"
           >
             Replace
           </button>
@@ -106,26 +106,26 @@ export function ResumeUploader() {
       ) : (
         <div
           onClick={() => fileRef.current?.click()}
-          className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+          className="border-2 border-dashed border-white/20 rounded-xl p-6 text-center cursor-pointer hover:border-[#2F2FE4] hover:bg-[#2F2FE4]/10 transition-all group shadow-lg shadow-black/20"
         >
-          <div className="text-2xl mb-2">📄</div>
-          <div className="text-sm font-medium text-gray-700">Upload your resume</div>
-          <div className="text-xs text-gray-400 mt-1">PDF only · stays on your device</div>
+          <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">📄</div>
+          <div className="text-sm font-bold text-white">Upload your resume</div>
+          <div className="text-[10px] uppercase tracking-widest text-white/40 mt-1.5 font-bold">PDF only · stays on device</div>
         </div>
       )}
 
       {status === 'parsing' && (
-        <div className="flex items-center gap-2 text-xs text-indigo-600">
-          <div className="animate-spin w-3 h-3 border border-indigo-500 border-t-transparent rounded-full" />
-          Parsing resume...
+        <div className="flex items-center gap-2 text-xs font-bold text-[#2F2FE4]">
+          <div className="animate-spin w-3 h-3 border-2 border-[#2F2FE4] border-t-transparent rounded-full" />
+          Parsing resume securely...
         </div>
       )}
 
       {status === 'done' && (
-        <div className="text-xs text-green-600">Resume updated! Old cached answers marked as stale.</div>
+        <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 p-2 rounded text-center">Resume parsed successfully</div>
       )}
 
-      {error && <div className="text-xs text-red-500">{error}</div>}
+      {error && <div className="text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20 p-2 rounded text-center">{error}</div>}
 
       <input
         ref={fileRef}
