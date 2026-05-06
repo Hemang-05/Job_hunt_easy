@@ -16,9 +16,18 @@ export function ModelSelector() {
         onChange={(e) => updateSettings({ model: e.target.value })}
         className="w-full text-xs border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#2F2FE4] bg-black/40 text-white shadow-inner"
       >
-        {SUPPORTED_MODELS.map((m) => (
-          <option key={m.id} value={m.id} className="bg-[#080616]">{m.label}</option>
-        ))}
+        <optgroup label="Free Models" className="bg-[#080616]">
+          {SUPPORTED_MODELS.filter(m => m.free).map((m) => (
+            <option key={m.id} value={m.id}>{m.label}</option>
+          ))}
+        </optgroup>
+        <optgroup label="Premium Models (Pro)" className="bg-[#080616]">
+          {SUPPORTED_MODELS.filter(m => !m.free).map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.label.replace(' (Pro)', '')} 🔒
+            </option>
+          ))}
+        </optgroup>
       </select>
     </div>
   )
