@@ -181,7 +181,7 @@ export interface DBApplication {
 
 // ─── AI Provider ───────────────────────────────────────────
 
-export type AIProvider = 'openrouter' | 'google'
+export type AIProvider = 'openrouter' | 'google' | 'openai' | 'anthropic'
 
 export interface OpenRouterConfig {
   apiKey: string
@@ -199,31 +199,30 @@ export const SUPPORTED_MODELS = [
     free: true,
   },
 
-  // ── MONETIZE: Uncomment and restrict to paid users ──────
-  // {
-  //   id: 'google/gemini-2.0-flash-exp',
-  //   label: 'Gemini 2.0 Flash (Pro)',
-  //   provider: 'openrouter' as AIProvider,
-  //   free: false,
-  // },
-  // {
-  //   id: 'gemini-2.5-flash',
-  //   label: 'Gemini 2.5 Flash (Pro)',
-  //   provider: 'google' as AIProvider,
-  //   free: false,
-  // },
-  // {
-  //   id: 'anthropic/claude-sonnet-4-5',
-  //   label: 'Claude Sonnet 4.5 (Pro)',
-  //   provider: 'openrouter' as AIProvider,
-  //   free: false,
-  // },
-  // {
-  //   id: 'openai/gpt-4o',
-  //   label: 'GPT-4o (Pro)',
-  //   provider: 'openrouter' as AIProvider,
-  //   free: false,
-  // },
+  {
+    id: 'gemini-3.0-flash',
+    label: 'Gemini 3 Flash (Pro)',
+    provider: 'google' as AIProvider,
+    free: false,
+  },
+  {
+    id: 'google/gemini-pro-1.5',
+    label: 'Gemini 1.5 Pro (Pro)',
+    provider: 'google' as AIProvider,
+    free: false,
+  },
+  {
+    id: 'claude-3-5-sonnet-20240620',
+    label: 'Claude 3.5 Sonnet (Pro)',
+    provider: 'anthropic' as AIProvider,
+    free: false,
+  },
+  {
+    id: 'gpt-4o',
+    label: 'GPT-4o (Pro)',
+    provider: 'openai' as AIProvider,
+    free: false,
+  },
 ] as const
 
 export const DEFAULT_SETTINGS: Settings = {

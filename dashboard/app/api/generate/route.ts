@@ -40,6 +40,10 @@ export async function POST(req: Request) {
 
     if (provider === 'google') {
       return handleGoogleAI({ prompt, model, max_tokens, cors, req })
+    } else if (provider === 'openai') {
+      return handleOpenAI({ prompt, model, max_tokens, cors, req })
+    } else if (provider === 'anthropic') {
+      return handleAnthropic({ prompt, model, max_tokens, cors, req })
     } else {
       return handleOpenRouter({ prompt, model, max_tokens, cors, req })
     }
@@ -48,6 +52,128 @@ export async function POST(req: Request) {
     const cors = corsHeaders(req)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500, headers: cors })
   }
+}
+
+// ─── OpenAI Direct ──────────────────────────────────────────
+async function handleOpenAI({
+  prompt,
+  model,
+  max_tokens,
+  cors,
+  req,
+}: {
+  prompt: string
+  model: string
+  max_tokens: number
+  cors: Record<string, string>
+  req: Request
+}) {
+  const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+  if (!OPENAI_API_KEY) {
+    return NextResponse.json({ error: 'OpenAI API key missing' }, { status: 500, headers: cors })
+  }
+
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens,
+      stream: true,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  })
+
+  if (!res.ok) {
+    return NextResponse.json({ error: `OpenAI error: ${res.status}` }, { status: res.status, headers: cors })
+  }
+
+  return new Response(res.body, {
+    status: 200,
+    headers: { 'Content-Type': 'text/event-stream', ...cors },
+  })
+}
+
+// ─── Anthropic Direct ───────────────────────────────────────
+async function handleAnthropic({
+  prompt,
+  model,
+  max_tokens,
+  cors,
+  req,
+}: {
+  prompt: string
+  model: string
+  max_tokens: number
+  cors: Record<string, string>
+  req: Request
+}) {
+  const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY
+  if (!ANTHROPIC_API_KEY) {
+    return NextResponse.json({ error: 'Anthropic API key missing' }, { status: 500, headers: cors })
+  }
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens,
+      stream: true,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  })
+
+  if (!res.ok) {
+    return NextResponse.json({ error: `Anthropic error: ${res.status}` }, { status: res.status, headers: cors })
+  }
+
+  // Anthropic uses a different stream format, we must convert it to OpenAI format for the extension
+  const reader = res.body!.getReader()
+  const decoder = new TextDecoder()
+  const encoder = new TextEncoder()
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      let buffer = ''
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) {
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'))
+          controller.close()
+          break
+        }
+
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || ''
+
+        for (const line of lines) {
+          if (line.startsWith('data:')) {
+            try {
+              const json = JSON.parse(line.slice(5).trim())
+              if (json.type === 'content_block_delta' && json.delta?.text) {
+                const openAIChunk = { choices: [{ delta: { content: json.delta.text } }] }
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify(openAIChunk)}\n\n`))
+              }
+            } catch {}
+          }
+        }
+      }
+    },
+  })
+
+  return new Response(stream, {
+    status: 200,
+    headers: { 'Content-Type': 'text/event-stream', ...cors },
+  })
 }
 
 // ─── Google Generative Language API (Gemini) ────────────────

@@ -41,7 +41,6 @@ export async function POST(req: NextRequest) {
           raw_text: rawText,
           version,
           size_kb: sizeKb,
-          updated_at: new Date().toISOString(),
         })
         .eq('id', existing.id)
 
