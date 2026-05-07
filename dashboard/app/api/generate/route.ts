@@ -60,20 +60,25 @@ export async function POST(req: Request) {
     }
 
     // Session Logic
-    const thirtyMinsAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString()
+    // A "session" = filling forms on the same domain.
+    // We look for any session on this domain from today to avoid race conditions
+    // where rapid-fire fills on the same page create duplicate sessions.
+    const todayStart = `${today}T00:00:00.000Z`
 
     const { data: activeSession } = await supabase
       .from('sessions')
       .select('*')
       .eq('user_id', userId)
       .eq('domain', domain || 'unknown')
-      .gte('last_fill_at', thirtyMinsAgo)
+      .gte('started_at', todayStart)
       .order('last_fill_at', { ascending: false })
       .limit(1)
       .maybeSingle()
 
+    console.log(`[API Generate] Session check: domain="${domain}", activeSession=${!!activeSession}, sessionsToday=${sessionsToday}`)
+
     if (activeSession) {
-      // Continuation
+      // Continuation — same domain today, just update fill count
       await supabase
         .from('sessions')
         .update({
@@ -84,12 +89,14 @@ export async function POST(req: Request) {
 
       fillsToday++
     } else {
-      // New application
+      // New application on a new domain
       if (sessionsToday >= 5 && profile.plan === 'free') {
+        console.log(`[API Generate] BLOCKED: Free user hit daily limit (${sessionsToday}/5)`)
         return NextResponse.json({ error: 'DAILY_LIMIT_REACHED' }, { status: 403, headers: cors })
       }
 
-      await supabase
+      // Insert new session (ignore duplicate errors from race conditions)
+      const { error: sessionError } = await supabase
         .from('sessions')
         .insert({
           user_id: userId,
@@ -97,8 +104,13 @@ export async function POST(req: Request) {
           fills_in_session: 1
         })
 
+      if (sessionError) {
+        console.error('[API Generate] Session insert error:', sessionError.message)
+      }
+
       sessionsToday++
       fillsToday++
+      console.log(`[API Generate] New session created for domain="${domain}", sessionsToday now=${sessionsToday}`)
     }
 
     // Update profile

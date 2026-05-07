@@ -523,8 +523,11 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
     resetButton(fieldId, false)
     if (code === 'DAILY_LIMIT_REACHED') {
       showLimitReachedModal()
+    } else if (code === 'API_RATE_LIMITED' || errMsg.includes('rate limit') || errMsg.includes('429')) {
+      showSleekToast('Model experiencing high load. Try waiting a moment, switch to a different model, or upgrade to Pro for priority access.', 'info')
     } else {
-      showErrorToast(errMsg)
+      // Log all other errors to console only — never show ugly red errors to users
+      console.warn('[Job Hunt Easy] Suppressed error toast:', code, errMsg)
     }
   }
 })
@@ -601,18 +604,48 @@ function extractJobContext() {
   return { companyName, roleTitle, platform }
 }
 
-function showErrorToast(message: string) {
+function showSleekToast(message: string, type: 'info' | 'error' = 'info') {
+  // Remove any existing toast first
+  document.getElementById('job-hunt-easy-toast')?.remove()
+
   const toast = document.createElement('div')
+  toast.id = 'job-hunt-easy-toast'
+  const bgColor = type === 'info' ? 'rgba(17, 17, 27, 0.95)' : 'rgba(17, 17, 27, 0.95)'
+  const borderColor = type === 'info' ? 'rgba(99, 102, 241, 0.4)' : 'rgba(239, 68, 68, 0.4)'
+  const iconColor = type === 'info' ? '#818cf8' : '#f87171'
   toast.style.cssText = `
-    position: fixed; bottom: 20px; right: 20px;
-    background: #ef4444; color: white;
-    padding: 10px 16px; border-radius: 8px;
-    font-family: system-ui; font-size: 13px;
-    z-index: 2147483647; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    position: fixed; bottom: 24px; right: 24px;
+    background: ${bgColor}; color: #e0e4f5;
+    padding: 14px 20px; border-radius: 12px;
+    font-family: system-ui, -apple-system, sans-serif; font-size: 13px;
+    line-height: 1.5;
+    z-index: 2147483647;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    border: 1px solid ${borderColor};
+    backdrop-filter: blur(12px);
+    max-width: 360px;
+    animation: jheFadeIn 0.3s ease-out;
   `
-  toast.textContent = `Job Hunt Easy: ${message}`
+
+  // Add animation keyframes
+  const styleEl = document.createElement('style')
+  styleEl.textContent = `@keyframes jheFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }`
+  toast.appendChild(styleEl)
+
+  const content = document.createElement('div')
+  content.style.cssText = 'display: flex; align-items: flex-start; gap: 10px;'
+  content.innerHTML = `
+    <span style="color: ${iconColor}; font-size: 16px; flex-shrink: 0; margin-top: 1px;">⚡</span>
+    <span>${message}</span>
+  `
+  toast.appendChild(content)
   document.body.appendChild(toast)
-  setTimeout(() => toast.remove(), 4000)
+  setTimeout(() => {
+    toast.style.transition = 'opacity 0.3s, transform 0.3s'
+    toast.style.opacity = '0'
+    toast.style.transform = 'translateY(8px)'
+    setTimeout(() => toast.remove(), 300)
+  }, 6000)
 }
 
 function showLimitReachedModal() {
@@ -673,18 +706,19 @@ function showLimitReachedModal() {
       <h2>5 applications done —<br/>you're on fire!</h2>
       
       <div class="math-box">
-        You just saved <strong>~4 hours</strong> vs manual applicants.<br/>
-        Free limit: <strong>5 full applications</strong> per day.<br/>
-        Pro: <strong>Unlimited</strong> — apply to every job you find today.
+        <strong>More applications = More interviews.</strong><br/>
+        Less applications = Less interviews.<br/><br/>
+        In the same time you'd fill 1 form manually, Pro users complete <strong>6+ applications</strong>.<br/>
+        Upgrade now and maximize every minute of your job search.
       </div>
       
       <div class="stats">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-        Pro users apply to 30+ jobs/day vs 8 manually
+        30+ applications/day with Pro vs 5 on Free
       </div>
       
       <a href="https://job-hunt-easy-dashboard.vercel.app/pricing" target="_blank" class="upgrade-btn">
-        Upgrade to Pro →
+        Upgrade to Pro — Unlimited Applications →
       </a>
       <button class="later-btn">Continue tomorrow (resets at midnight)</button>
     </div>

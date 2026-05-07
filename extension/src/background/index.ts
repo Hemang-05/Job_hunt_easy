@@ -233,9 +233,27 @@ async function streamFromAPI({
     }
     
     if (response.status === 429) {
-      throw new Error('API rate limited — try again in a moment')
+      sendToTab(tabId, {
+        type: 'ERROR',
+        payload: {
+          fieldId,
+          code: 'API_RATE_LIMITED',
+          message: 'Model experiencing high load'
+        }
+      })
+      return // Don't throw — we already notified the tab
     }
-    throw new Error(`Job Hunt Easy: API error ${response.status}`)
+    // For all other errors, log but don't show ugly messages to users
+    console.error('[Job Hunt Easy] API error (suppressed from user):', response.status, errBody)
+    sendToTab(tabId, {
+      type: 'ERROR',
+      payload: {
+        fieldId,
+        code: 'API_ERROR',
+        message: errBody || 'Something went wrong'
+      }
+    })
+    return
   }
 
   const contentType = response.headers.get('content-type') || ''

@@ -35,13 +35,15 @@
   ],
 
   "permissions": [
-    "storage"
+    "storage",
+    "cookies"
   ],
 
   "host_permissions": [
     "https://openrouter.ai/*",
     "https://generativelanguage.googleapis.com/*",
-    "https://job-hunt-easy-dashboard.vercel.app/*"
+    "https://job-hunt-easy-dashboard.vercel.app/*",
+    "http://localhost:3000/*"
   ],
 
   "content_security_policy": {

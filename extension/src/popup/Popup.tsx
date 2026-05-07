@@ -12,13 +12,34 @@ function UsageBar() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/usage`, { credentials: 'include' })
-      .then(r => r.json())
-      .then(data => {
+    async function fetchUsage() {
+      try {
+        // Read Clerk's session cookie from the dashboard domain
+        const cookie = await chrome.cookies.get({
+          url: API_BASE_URL,
+          name: '__session'
+        })
+
+        if (!cookie?.value) {
+          // Not signed in to dashboard
+          setLoading(false)
+          return
+        }
+
+        const res = await fetch(`${API_BASE_URL}/api/usage`, {
+          headers: {
+            'Cookie': `__session=${cookie.value}`
+          }
+        })
+        const data = await res.json()
         setUsage(data)
+      } catch (err) {
+        console.debug('[Job Hunt Easy] Usage fetch failed:', err)
+      } finally {
         setLoading(false)
-      })
-      .catch(() => setLoading(false))
+      }
+    }
+    fetchUsage()
   }, [])
 
   if (loading) {
