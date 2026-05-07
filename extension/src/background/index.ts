@@ -232,6 +232,18 @@ async function streamFromAPI({
       throw new Error('DAILY_LIMIT_REACHED')
     }
     
+    if (response.status === 403 && errBody.includes('UPGRADE_REQUIRED')) {
+      sendToTab(tabId, {
+        type: 'ERROR',
+        payload: {
+          fieldId,
+          code: 'UPGRADE_REQUIRED',
+          message: 'Upgrade Required'
+        }
+      })
+      throw new Error('UPGRADE_REQUIRED')
+    }
+
     if (response.status === 429) {
       sendToTab(tabId, {
         type: 'ERROR',

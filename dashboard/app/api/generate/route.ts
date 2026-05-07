@@ -141,6 +141,15 @@ export async function POST(req: Request) {
 
     console.log(`[API Generate] Processing request: model="${model}" (original="${rawModel}"), provider="${provider}"`)
 
+    // Block free users from using Pro models
+    if (profile.plan === 'free' && modelEntry && !modelEntry.free) {
+      console.log(`[API Generate] BLOCKED: Free user tried to use Pro model: ${model}`)
+      return NextResponse.json(
+        { error: 'UPGRADE_REQUIRED', message: 'Upgrade to Pro to use this model.' },
+        { status: 403, headers: cors }
+      )
+    }
+
     let finalModel = model
     let finalProvider = provider
 

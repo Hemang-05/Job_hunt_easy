@@ -388,7 +388,7 @@ function attachFillButton(field: HTMLElement) {
       button.disabled = false
       button.classList.remove('loading')
       button.innerHTML = isRegeneration ? `<span>↻</span> Regenerate` : `<span>✦</span> Fill with AI`
-      showErrorToast('Extension was updated. Please refresh this page (F5).')
+      showSleekToast('Extension was updated. Please refresh this page (F5).', 'info')
       removeAllButtons()
     })
   })
@@ -523,6 +523,8 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
     resetButton(fieldId, false)
     if (code === 'DAILY_LIMIT_REACHED') {
       showLimitReachedModal()
+    } else if (code === 'UPGRADE_REQUIRED') {
+      showSleekToast('Upgrade to Pro to use this premium AI model.', 'error')
     } else if (code === 'API_RATE_LIMITED' || errMsg.includes('rate limit') || errMsg.includes('429')) {
       showSleekToast('Model experiencing high load. Try waiting a moment, switch to a different model, or upgrade to Pro for priority access.', 'info')
     } else {
@@ -720,7 +722,7 @@ function showLimitReachedModal() {
       <a href="https://job-hunt-easy-dashboard.vercel.app/pricing" target="_blank" class="upgrade-btn">
         Upgrade to Pro — Unlimited Applications →
       </a>
-      <button class="later-btn">Continue tomorrow (resets at midnight)</button>
+      <button class="later-btn">Fill Manually (4x fewer applications per hour)</button>
     </div>
   `
 
