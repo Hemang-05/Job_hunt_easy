@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { SUPPORTED_MODELS } from '@job-hunt-easy/types'
+import { auth } from '@clerk/nextjs/server'
+import { createClient } from '@/lib/supabase/server'
 
 // ─── CORS for Chrome Extension requests ────────────────────
 function corsHeaders(req: Request) {
@@ -18,9 +20,98 @@ export async function OPTIONS(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
-    const { prompt, model: rawModel, max_tokens } = body
     const cors = corsHeaders(req)
+    const { userId } = auth()
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: cors })
+    }
+
+    const body = await req.json()
+    const { prompt, model: rawModel, max_tokens, domain } = body
+
+    const supabase = createClient()
+    const today = new Date().toISOString().split('T')[0] // 'YYYY-MM-DD'
+
+    // Fetch profile
+    let { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .single()
+
+    if (!profile) {
+      // Create default profile
+      const { data: newProfile, error } = await supabase
+        .from('profiles')
+        .insert({ user_id: userId })
+        .select()
+        .single()
+      if (error) throw error
+      profile = newProfile
+    }
+
+    // Date reset logic
+    let sessionsToday = profile.sessions_today
+    let fillsToday = profile.fills_today
+
+    if (profile.last_activity_date !== today) {
+      sessionsToday = 0
+      fillsToday = 0
+    }
+
+    // Session Logic
+    const thirtyMinsAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString()
+
+    const { data: activeSession } = await supabase
+      .from('sessions')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('domain', domain || 'unknown')
+      .gte('last_fill_at', thirtyMinsAgo)
+      .order('last_fill_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (activeSession) {
+      // Continuation
+      await supabase
+        .from('sessions')
+        .update({
+          last_fill_at: new Date().toISOString(),
+          fills_in_session: activeSession.fills_in_session + 1
+        })
+        .eq('id', activeSession.id)
+
+      fillsToday++
+    } else {
+      // New application
+      if (sessionsToday >= 5 && profile.plan === 'free') {
+        return NextResponse.json({ error: 'DAILY_LIMIT_REACHED' }, { status: 403, headers: cors })
+      }
+
+      await supabase
+        .from('sessions')
+        .insert({
+          user_id: userId,
+          domain: domain || 'unknown',
+          fills_in_session: 1
+        })
+
+      sessionsToday++
+      fillsToday++
+    }
+
+    // Update profile
+    await supabase
+      .from('profiles')
+      .update({
+        sessions_today: sessionsToday,
+        fills_today: fillsToday,
+        last_activity_date: today,
+        total_sessions: activeSession ? profile.total_sessions : profile.total_sessions + 1,
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', userId)
 
     // Fallback for retired models stored in old extension settings
     let model = rawModel
@@ -38,14 +129,23 @@ export async function POST(req: Request) {
 
     console.log(`[API Generate] Processing request: model="${model}" (original="${rawModel}"), provider="${provider}"`)
 
-    if (provider === 'google') {
-      return handleGoogleAI({ prompt, model, max_tokens, cors, req })
-    } else if (provider === 'openai') {
-      return handleOpenAI({ prompt, model, max_tokens, cors, req })
-    } else if (provider === 'anthropic') {
-      return handleAnthropic({ prompt, model, max_tokens, cors, req })
+    let finalModel = model
+    let finalProvider = provider
+
+    // TEMPORARY OVERRIDE: Route GPT-5.4 Nano to Gemini 3 Flash until OpenAI credits are added
+    if (finalModel === 'gpt-5.4-nano-2026-03-17') {
+      finalModel = 'gemini-3.1-flash-lite-preview'
+      finalProvider = 'google'
+    }
+
+    if (finalProvider === 'google') {
+      return handleGoogleAI({ prompt, model: finalModel, max_tokens, cors, req })
+    } else if (finalProvider === 'openai') {
+      return handleOpenAI({ prompt, model: finalModel, max_tokens, cors, req })
+    } else if (finalProvider === 'anthropic') {
+      return handleAnthropic({ prompt, model: finalModel, max_tokens, cors, req })
     } else {
-      return handleOpenRouter({ prompt, model, max_tokens, cors, req })
+      return handleOpenRouter({ prompt, model: finalModel, max_tokens, cors, req })
     }
   } catch (error: any) {
     console.error('[API Generate] Exception:', error.message)
@@ -88,6 +188,8 @@ async function handleOpenAI({
   })
 
   if (!res.ok) {
+    const errText = await res.text()
+    console.error('[API Generate] OpenAI error:', res.status, errText)
     return NextResponse.json({ error: `OpenAI error: ${res.status}` }, { status: res.status, headers: cors })
   }
 
@@ -163,7 +265,7 @@ async function handleAnthropic({
                 const openAIChunk = { choices: [{ delta: { content: json.delta.text } }] }
                 controller.enqueue(encoder.encode(`data: ${JSON.stringify(openAIChunk)}\n\n`))
               }
-            } catch {}
+            } catch { }
           }
         }
       }

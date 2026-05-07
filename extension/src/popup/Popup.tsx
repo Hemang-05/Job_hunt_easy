@@ -5,6 +5,61 @@ import { useExtensionStore } from './store'
 import { ResumeUploader } from './components/ResumeUploader'
 import { ModelSelector, ToneSelector, CacheStats } from './components/Settings'
 
+import { API_BASE_URL } from '../shared/utils'
+
+function UsageBar() {
+  const [usage, setUsage] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/usage`, { credentials: 'include' })
+      .then(r => r.json())
+      .then(data => {
+        setUsage(data)
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return <div className="px-4 py-2 text-xs text-white/50 animate-pulse border-b border-white/5 relative z-10 bg-black/20">Loading limits...</div>
+  }
+
+  if (!usage || usage.error) {
+    return (
+      <div className="px-4 py-2 text-[11px] text-amber-500/80 bg-amber-500/10 border-b border-white/5 relative z-10">
+        Sign in at <a href="https://job-hunt-easy-dashboard.vercel.app" target="_blank" className="underline">Dashboard</a> to track usage
+      </div>
+    )
+  }
+
+  if (usage.plan === 'pro') {
+    return (
+      <div className="px-4 py-2 flex items-center justify-between text-xs border-b border-white/5 bg-gradient-to-r from-[#2F2FE4]/20 to-purple-500/20 relative z-10">
+        <span className="text-white font-medium flex items-center gap-1"><span className="text-emerald-400">✦</span> Pro Plan</span>
+        <span className="text-white/60">Unlimited applications</span>
+      </div>
+    )
+  }
+
+  const percent = Math.min(100, Math.max(0, (usage.sessions_used / usage.sessions_limit) * 100))
+
+  return (
+    <div className="px-4 py-2.5 border-b border-white/5 bg-white/5 relative z-10">
+      <div className="flex justify-between text-xs mb-1.5">
+        <span className="text-white/90 font-medium">{usage.sessions_used} / {usage.sessions_limit} applications today</span>
+        <a href="https://job-hunt-easy-dashboard.vercel.app/pricing" target="_blank" className="text-[#6366f1] hover:text-white transition-colors font-bold">Upgrade →</a>
+      </div>
+      <div className="h-1.5 w-full bg-black/50 rounded-full overflow-hidden border border-white/10">
+        <div className="h-full bg-gradient-to-r from-[#6366f1] to-[#a855f7] transition-all" style={{ width: `${percent}%` }} />
+      </div>
+      <div className="text-[10px] text-white/40 mt-1.5 text-right uppercase tracking-wider font-bold">
+        Resets in {usage.reset_in}
+      </div>
+    </div>
+  )
+}
+
 function Popup() {
   const { settings, resume, isLoaded, loadFromStorage } = useExtensionStore()
   const [activeTab, setActiveTab] = useState<'settings' | 'resume' | 'cache'>('settings')
@@ -35,8 +90,10 @@ function Popup() {
         <span className="ml-auto text-[10px] uppercase tracking-wider font-bold text-white/40">AI Filler</span>
       </div>
 
+      <UsageBar />
+
       {/* Status bar */}
-      <div className={`px-4 py-2.5 text-xs font-semibold flex items-center gap-2 border-b border-white/5 ${
+      <div className={`px-4 py-2 text-xs font-semibold flex items-center gap-2 border-b border-white/5 ${
         settings.enabled ? 'bg-emerald-500/10 text-emerald-400' : 'bg-white/5 text-white/50'
       } relative z-10`}>
         <div className={`w-2 h-2 rounded-full ${settings.enabled ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'bg-white/30'}`} />

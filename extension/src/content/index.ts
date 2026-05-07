@@ -519,9 +519,13 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
   }
 
   if (message.type === 'ERROR') {
-    const { fieldId, message: errMsg } = message.payload
+    const { fieldId, message: errMsg, code } = message.payload
     resetButton(fieldId, false)
-    showErrorToast(errMsg)
+    if (code === 'DAILY_LIMIT_REACHED') {
+      showLimitReachedModal()
+    } else {
+      showErrorToast(errMsg)
+    }
   }
 })
 
@@ -609,4 +613,93 @@ function showErrorToast(message: string) {
   toast.textContent = `Job Hunt Easy: ${message}`
   document.body.appendChild(toast)
   setTimeout(() => toast.remove(), 4000)
+}
+
+function showLimitReachedModal() {
+  if (document.getElementById('job-hunt-easy-limit-modal')) return
+
+  const container = document.createElement('div')
+  container.id = 'job-hunt-easy-limit-modal'
+  container.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 2147483647; font-family: system-ui, -apple-system, sans-serif;
+  `
+
+  const shadowRoot = container.attachShadow({ mode: 'open' })
+
+  const modalHtml = `
+    <style>
+      .modal {
+        background: #fff; width: 440px; border-radius: 16px;
+        padding: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        position: relative; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      .close {
+        position: absolute; top: 16px; right: 16px; background: none; border: none;
+        font-size: 20px; cursor: pointer; color: #9ca3af;
+      }
+      .close:hover { color: #374151; }
+      .emoji { font-size: 40px; text-align: center; margin-bottom: 16px; }
+      h2 { margin: 0 0 12px; font-size: 22px; color: #111827; text-align: center; line-height: 1.3; }
+      .math-box {
+        background: #f3f4f6; border-radius: 12px; padding: 16px;
+        margin: 24px 0; font-size: 14px; color: #4b5563; line-height: 1.6;
+      }
+      .math-box strong { color: #111827; }
+      .stats {
+        display: flex; align-items: center; gap: 8px; margin-bottom: 24px;
+        color: #059669; font-weight: 500; font-size: 14px; justify-content: center;
+      }
+      .upgrade-btn {
+        display: block; width: 100%; padding: 14px; background: #2563eb;
+        color: white; border: none; border-radius: 8px; font-size: 16px;
+        font-weight: 600; cursor: pointer; text-align: center; text-decoration: none;
+        transition: background 0.2s;
+      }
+      .upgrade-btn:hover { background: #1d4ed8; }
+      .later-btn {
+        display: block; width: 100%; padding: 12px; background: none;
+        border: none; color: #6b7280; font-size: 14px; margin-top: 8px;
+        cursor: pointer; text-align: center;
+      }
+      .later-btn:hover { color: #374151; text-decoration: underline; }
+    </style>
+    <div class="modal">
+      <button class="close">×</button>
+      <div class="emoji">🎉</div>
+      <h2>5 applications done —<br/>you're on fire!</h2>
+      
+      <div class="math-box">
+        You just saved <strong>~4 hours</strong> vs manual applicants.<br/>
+        Free limit: <strong>5 full applications</strong> per day.<br/>
+        Pro: <strong>Unlimited</strong> — apply to every job you find today.
+      </div>
+      
+      <div class="stats">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+        Pro users apply to 30+ jobs/day vs 8 manually
+      </div>
+      
+      <a href="https://job-hunt-easy-dashboard.vercel.app/pricing" target="_blank" class="upgrade-btn">
+        Upgrade to Pro →
+      </a>
+      <button class="later-btn">Continue tomorrow (resets at midnight)</button>
+    </div>
+  `
+
+  shadowRoot.innerHTML = modalHtml
+  document.body.appendChild(container)
+
+  const closeBtn = shadowRoot.querySelector('.close') as HTMLButtonElement
+  const laterBtn = shadowRoot.querySelector('.later-btn') as HTMLButtonElement
+  const upgradeBtn = shadowRoot.querySelector('.upgrade-btn') as HTMLAnchorElement
+
+  const close = () => container.remove()
+  
+  closeBtn.onclick = close
+  laterBtn.onclick = close
+  upgradeBtn.onclick = close
 }

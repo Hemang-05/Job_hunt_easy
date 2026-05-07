@@ -76,10 +76,10 @@ async function handleFillRequest(
       if (currentUserId && resume.userId && resume.userId !== currentUserId) {
         sendToTab(tabId, {
           type: 'ERROR',
-          payload: { 
-            fieldId, 
-            code: 'RESUME_NOT_FOUND', 
-            message: 'Resume account mismatch. Please re-upload your resume in the extension popup.' 
+          payload: {
+            fieldId,
+            code: 'RESUME_NOT_FOUND',
+            message: 'Resume account mismatch. Please re-upload your resume in the extension popup.'
           },
         })
         return
@@ -133,6 +133,7 @@ async function handleFillRequest(
       settings,
       tabId,
       fieldId,
+      pageUrl,
       onComplete: async (fullAnswer) => {
         // Save to cache after successful generation
         await saveToCache({
@@ -145,14 +146,14 @@ async function handleFillRequest(
           isRegeneration: message.payload.isRegeneration,
           existingCached: cached
         })
-        
+
         // Sync to Dashboard (Phase 1)
-        syncToDashboard({ 
-          question, 
-          hash, 
-          answer: fullAnswer, 
+        syncToDashboard({
+          question,
+          hash,
+          answer: fullAnswer,
           pageUrl,
-          jobContext: message.payload.jobContext 
+          jobContext: message.payload.jobContext
         })
       },
     })
@@ -180,15 +181,24 @@ async function streamFromAPI({
   settings,
   tabId,
   fieldId,
+  pageUrl,
   onComplete,
 }: {
   prompt: string
   settings: Settings
   tabId: number
   fieldId: string
+  pageUrl: string
   onComplete: (fullAnswer: string) => Promise<void>
 }) {
   console.debug('[Job Hunt Easy] Calling /api/generate with model:', settings.model)
+
+  let domain = 'unknown'
+  try {
+    domain = new URL(pageUrl).hostname.replace(/^www\./, '')
+  } catch (e) {
+    // Ignore invalid URLs
+  }
 
   const response = await fetch(`${API_BASE_URL}/api/generate`, {
     method: 'POST',
@@ -200,13 +210,28 @@ async function streamFromAPI({
       prompt,
       model: settings.model,
       max_tokens: settings.maxAnswerLength,
-      tone: settings.tone
+      tone: settings.tone,
+      pageUrl,
+      domain
     }),
   })
 
   if (!response.ok) {
     const errBody = await response.text().catch(() => '')
     console.error('[Job Hunt Easy] API error:', response.status, errBody)
+    
+    if (response.status === 403 && errBody.includes('DAILY_LIMIT_REACHED')) {
+      sendToTab(tabId, {
+        type: 'ERROR',
+        payload: {
+          fieldId,
+          code: 'DAILY_LIMIT_REACHED',
+          message: 'Daily Limit Reached'
+        }
+      })
+      throw new Error('DAILY_LIMIT_REACHED')
+    }
+    
     if (response.status === 429) {
       throw new Error('API rate limited — try again in a moment')
     }
@@ -364,14 +389,14 @@ async function saveToCache({
 }) {
   if (isRegeneration && existingCached) {
     // Update existing entry instead of creating a new one
-    const updatedCache = answerCache.map((entry) => 
-      entry.id === existingCached.id 
-        ? { 
-            ...entry, 
-            answer, 
-            generationCount: (entry.generationCount ?? 1) + 1,
-            lastUsedAt: Date.now()
-          } 
+    const updatedCache = answerCache.map((entry) =>
+      entry.id === existingCached.id
+        ? {
+          ...entry,
+          answer,
+          generationCount: (entry.generationCount ?? 1) + 1,
+          lastUsedAt: Date.now()
+        }
         : entry
     )
     chrome.storage.local.set({ answerCache: updatedCache })
@@ -451,10 +476,10 @@ function sendToTab(tabId: number, message: ExtensionMessage) {
 
 // ─── Dashboard Sync ────────────────────────────────────────
 
-async function syncToDashboard(payload: { 
-  question: string, 
-  hash: string, 
-  answer: string, 
+async function syncToDashboard(payload: {
+  question: string,
+  hash: string,
+  answer: string,
   pageUrl: string,
   jobContext?: { companyName?: string, roleTitle?: string, platform?: string }
 }) {

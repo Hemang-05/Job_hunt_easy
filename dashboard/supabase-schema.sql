@@ -137,3 +137,44 @@ using ( user_id = (auth.jwt() ->> 'sub') );
 
 create index if not exists idx_applications_user
 on public.applications (user_id);
+
+-- ─── 10. Profiles table (Monetization & Limits) ────────────
+
+create table if not exists public.profiles (
+  user_id            text primary key,
+  plan               text not null default 'free',
+  sessions_today     integer not null default 0,
+  fills_today        integer not null default 0,
+  last_activity_date date default current_date,
+  total_sessions     integer not null default 0,
+  created_at         timestamptz not null default now(),
+  updated_at         timestamptz not null default now()
+);
+
+alter table public.profiles enable row level security;
+
+drop policy if exists "Users can access own profile" on public.profiles;
+create policy "Users can access own profile"
+on public.profiles for all
+using ( user_id = (auth.jwt() ->> 'sub') );
+
+-- ─── 11. Sessions table (Application tracking) ─────────────
+
+create table if not exists public.sessions (
+  id                 uuid primary key default gen_random_uuid(),
+  user_id            text not null,
+  domain             text not null,
+  fills_in_session   integer not null default 1,
+  started_at         timestamptz not null default now(),
+  last_fill_at       timestamptz not null default now()
+);
+
+alter table public.sessions enable row level security;
+
+drop policy if exists "Users can access own sessions" on public.sessions;
+create policy "Users can access own sessions"
+on public.sessions for all
+using ( user_id = (auth.jwt() ->> 'sub') );
+
+create index if not exists idx_sessions_user_domain
+on public.sessions (user_id, domain);

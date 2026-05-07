@@ -130,6 +130,7 @@ export type ErrorCode =
   | 'STORAGE_FULL'
   | 'PARSE_ERROR'
   | 'UPGRADE_REQUIRED'
+  | 'DAILY_LIMIT_REACHED'
 
 // ─── Chrome Storage Schema ─────────────────────────────────
 // chrome.storage.local holds this shape
@@ -194,32 +195,20 @@ export interface OpenRouterConfig {
 export const SUPPORTED_MODELS = [
   {
     id: 'qwen/qwen3-next-80b-a3b-instruct:free',
-    label: 'Qwen 3 Next 80B (Free)',
+    label: '🟢 Standard',
     provider: 'openrouter' as AIProvider,
     free: true,
   },
 
   {
     id: 'gemini-3.1-flash-lite-preview',
-    label: 'Gemini 3 Flash (Pro)',
+    label: '⚡ Fast 🔒',
     provider: 'google' as AIProvider,
     free: false,
   },
   {
-    id: 'claude-3-5-haiku-20241022',
-    label: 'Claude 3.5 Haiku (Pro)',
-    provider: 'anthropic' as AIProvider,
-    free: false,
-  },
-  {
-    id: 'claude-3-5-sonnet-20241022',
-    label: 'Claude 3.5 Sonnet (Pro)',
-    provider: 'anthropic' as AIProvider,
-    free: false,
-  },
-  {
-    id: 'gpt-4o',
-    label: 'GPT-4o (Pro)',
+    id: 'gpt-5.4-nano-2026-03-17',
+    label: '🧠 Smart 🔒',
     provider: 'openai' as AIProvider,
     free: false,
   },
