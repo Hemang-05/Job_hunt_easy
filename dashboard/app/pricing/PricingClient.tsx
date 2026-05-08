@@ -190,30 +190,12 @@ export default function PricingClient({ initialUser, initialPlan }: PricingClien
 
           <button
             onClick={handleUpgrade}
-            disabled={loading}
-            className="w-full rounded-xl py-3 text-sm font-600 bg-indigo-500 hover:bg-indigo-400 text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            disabled={true}
+            style={{ opacity: 0.7 }}
+            className="w-full rounded-xl py-3 text-sm font-600 bg-indigo-500 text-white flex items-center justify-center gap-2 cursor-not-allowed"
           >
-            {loading ? (
-              <>
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Redirecting...
-              </>
-            ) : isPro ? (
-              <>
-                <Check className="w-4 h-4" />
-                Current plan
-              </>
-            ) : initialUser ? (
-              <>
-                <Zap className="w-4 h-4" />
-                Upgrade to Pro
-              </>
-            ) : (
-              <>
-                <Zap className="w-4 h-4" />
-                Sign up to upgrade
-              </>
-            )}
+            <Zap className="w-4 h-4" />
+            Payments launching soon
           </button>
 
           <p className="text-center text-gray-600 text-xs mt-3">
