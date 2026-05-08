@@ -1,6 +1,7 @@
 'use client'
 
 import { UserProfile, useUser } from '@clerk/nextjs'
+import { dark } from '@clerk/themes'
 import { User, Mail, ShieldCheck } from 'lucide-react'
 
 export default function SettingsPage() {
@@ -55,6 +56,7 @@ export default function SettingsPage() {
             <UserProfile
               routing="hash"
               appearance={{
+                baseTheme: dark,
                 elements: {
                   rootBox: "w-full",
                   cardBox: "w-full shadow-none",

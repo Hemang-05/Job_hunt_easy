@@ -22,11 +22,20 @@ async function DashboardContent() {
   let totalAnswers = 0
   let topAnswer = null
   let totalUses = 0
+  let plan = 'free'
 
   try {
     const result = await createUserClient()
     client = result.client
     userId = result.userId
+
+    const { data: profile } = await client
+      .from('profiles')
+      .select('plan')
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    plan = profile?.plan === 'pro' ? 'pro' : 'free'
 
     // 1. Get 5 most recent answers
     const { data: recentData } = await client
@@ -79,16 +88,26 @@ async function DashboardContent() {
         <h1 className="text-3xl font-black text-white tracking-tight">
           Welcome back, {user?.firstName}
         </h1>
-        <p className="text-white/50 mt-2 text-sm font-medium">
-          Here&apos;s how Job Hunt Easy is supercharging your applications.
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-2">
+          <p className="text-white/50 text-sm font-medium">
+            Here&apos;s how Job Hunt Easy is supercharging your applications.
+          </p>
+          <span className={`w-fit rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
+            plan === 'pro'
+              ? 'bg-indigo-500/20 text-indigo-200 border-indigo-400/25'
+              : 'bg-white/5 text-white/45 border-white/10'
+          }`}>
+            {plan === 'pro' ? 'Pro plan' : 'Free plan'}
+          </span>
+        </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
           { label: 'Saved answers',  value: totalAnswers,  sub: 'Total in library', icon: <Sparkles className="w-5 h-5 text-indigo-400" /> },
           { label: 'Total uses',     value: totalUses,           sub: 'Fields filled', icon: <Zap className="w-5 h-5 text-indigo-400" /> },
+          { label: 'Plan',           value: plan === 'pro' ? 'Pro' : 'Free', sub: plan === 'pro' ? 'Unlimited access' : '5 sessions per day', icon: <Star className="w-5 h-5 text-indigo-400" /> },
           { label: 'Top question',   value: topAnswer?.used_count ?? 0, sub: topAnswer?.question_text ? topAnswer.question_text.slice(0, 20) + '…' : 'None yet', icon: <Star className="w-5 h-5 text-indigo-400" /> },
         ].map(({ label, value, sub, icon }) => (
           <div key={label} className="glass-tile p-6 relative group">

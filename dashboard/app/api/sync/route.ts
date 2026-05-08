@@ -4,11 +4,13 @@ import { auth } from '@clerk/nextjs/server'
 
 // Setup CORS proxy headers specifically for Chrome Extension UI
 function setCorsHeaders(req: Request, res: NextResponse) {
-  const origin = req.headers.get('origin') || '*'
-  res.headers.set('Access-Control-Allow-Origin', origin)
+  const origin = req.headers.get('origin')
+  const allowedOrigin = origin || process.env.NEXT_PUBLIC_APP_URL || '*'
+  
+  res.headers.set('Access-Control-Allow-Origin', allowedOrigin)
   res.headers.set('Access-Control-Allow-Credentials', 'true')
   res.headers.set('Access-Control-Allow-Methods', 'OPTIONS, POST')
-  res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie')
   return res
 }
 

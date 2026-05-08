@@ -119,32 +119,3 @@ body {
 ::-webkit-scrollbar-button {
   display: none;
 }
-
-/* ─── CLERK DARK MODE OVERRIDES ─── */
-.cl-rootBox, .cl-userProfile-root {
-  --cl-color-text: #ffffff !important;
-  --cl-color-text-secondary: rgba(255, 255, 255, 0.5) !important;
-}
-
-.cl-userPreviewSecondaryIdentifier, 
-.cl-identityPreviewText,
-.cl-formFieldLabel,
-.cl-headerSubtitle,
-.cl-text-muted {
-  color: rgba(255, 255, 255, 0.6) !important;
-}
-
-.cl-userPreviewMainIdentifier,
-.cl-headerTitle,
-.cl-profileSectionTitleText,
-.cl-formButtonPrimary {
-  color: white !important;
-}
-
-.cl-profileSectionTitleText {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-}
-
-.cl-navbarMobileMenuButton, .cl-accordionTriggerButton {
-  color: white !important;
-}

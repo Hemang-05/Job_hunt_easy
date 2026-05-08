@@ -22,6 +22,30 @@ import { hashQuestion, normalizeQuestion, API_BASE_URL } from '../shared/utils'
 import { buildPrompt } from '../shared/promptBuilder'
 import { scoreChunks } from '../shared/chunkScorer'
 
+// ─── Auth Helper ───────────────────────────────────────────
+// On localhost, SameSite=Lax cookies are not sent in cross-site extension requests.
+// We manually read the Clerk session cookie and send it in the Authorization header.
+async function authenticatedFetch(url: string, options: RequestInit = {}) {
+  const cookie = await chrome.cookies.get({
+    url: API_BASE_URL,
+    name: '__session'
+  })
+
+  const headers = {
+    ...(options.headers as Record<string, string>),
+  }
+
+  if (cookie?.value) {
+    headers['Authorization'] = `Bearer ${cookie.value}`
+  }
+
+  return fetch(url, {
+    ...options,
+    headers,
+    credentials: 'include' // Still include cookies for production environments
+  })
+}
+
 // ─── Keep-alive ────────────────────────────────────────────
 // Chrome kills idle service workers. The content script pings
 // us every 20s to prevent that during active sessions.
@@ -68,7 +92,7 @@ async function handleFillRequest(
 
     // Security: Check for account mismatch
     try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/me`, { credentials: 'include' })
+      const res = await authenticatedFetch(`${API_BASE_URL}/api/auth/me`)
       const data = await res.json()
       const currentUserId = data.userId
 
@@ -200,12 +224,11 @@ async function streamFromAPI({
     // Ignore invalid URLs
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/generate`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/generate`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include',
     body: JSON.stringify({
       prompt,
       model: settings.model,
@@ -514,10 +537,9 @@ async function syncToDashboard(payload: {
   jobContext?: { companyName?: string, roleTitle?: string, platform?: string }
 }) {
   try {
-    await fetch(`${API_BASE_URL}/api/sync`, {
+    await authenticatedFetch(`${API_BASE_URL}/api/sync`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'include', // Automatically passes Clerk __session cookies!
       body: JSON.stringify(payload)
     })
   } catch (err) {

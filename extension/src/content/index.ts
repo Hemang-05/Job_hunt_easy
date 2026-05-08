@@ -524,7 +524,7 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
     if (code === 'DAILY_LIMIT_REACHED') {
       showLimitReachedModal()
     } else if (code === 'UPGRADE_REQUIRED') {
-      showSleekToast('Upgrade to Pro to use this premium AI model.', 'error')
+      showProUpsellModal()
     } else if (code === 'API_RATE_LIMITED' || errMsg.includes('rate limit') || errMsg.includes('429')) {
       showSleekToast('Model experiencing high load. Try waiting a moment, switch to a different model, or upgrade to Pro for priority access.', 'info')
     } else {
@@ -648,6 +648,84 @@ function showSleekToast(message: string, type: 'info' | 'error' = 'info') {
     toast.style.transform = 'translateY(8px)'
     setTimeout(() => toast.remove(), 300)
   }, 6000)
+}
+
+function showProUpsellModal() {
+  if (document.getElementById('job-hunt-easy-pro-modal')) return
+
+  const container = document.createElement('div')
+  container.id = 'job-hunt-easy-pro-modal'
+  container.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 2147483647; font-family: system-ui, -apple-system, sans-serif;
+  `
+
+  const shadowRoot = container.attachShadow({ mode: 'open' })
+
+  shadowRoot.innerHTML = `
+    <style>
+      .modal {
+        background: #fff; width: 420px; border-radius: 16px;
+        padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        position: relative; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      .close {
+        position: absolute; top: 16px; right: 16px; background: none; border: none;
+        font-size: 20px; cursor: pointer; color: #9ca3af;
+      }
+      .close:hover { color: #374151; }
+      .icon {
+        width: 48px; height: 48px; border-radius: 14px; background: #eef2ff;
+        color: #4f46e5; display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 16px; font-weight: 800; font-size: 20px;
+      }
+      h2 { margin: 0 0 12px; font-size: 22px; color: #111827; text-align: center; line-height: 1.3; }
+      p { margin: 0; color: #4b5563; font-size: 14px; line-height: 1.6; text-align: center; }
+      .features { background: #f3f4f6; border-radius: 12px; padding: 16px; margin: 22px 0; color: #374151; font-size: 14px; line-height: 1.8; }
+      .features strong { color: #111827; }
+      .upgrade-btn {
+        display: block; width: 100%; padding: 14px; background: #4f46e5;
+        color: white; border: none; border-radius: 8px; font-size: 15px;
+        font-weight: 700; cursor: pointer; text-align: center; text-decoration: none;
+      }
+      .upgrade-btn:hover { background: #4338ca; }
+      .later-btn {
+        display: block; width: 100%; padding: 12px; background: none;
+        border: none; color: #6b7280; font-size: 14px; margin-top: 8px;
+        cursor: pointer; text-align: center;
+      }
+    </style>
+    <div class="modal">
+      <button class="close">x</button>
+      <div class="icon">Pro</div>
+      <h2>Premium models are included with Pro</h2>
+      <p>Upgrade to unlock smarter models and keep filling applications without the free daily cap.</p>
+      <div class="features">
+        <div><strong>Unlimited</strong> autofill sessions</div>
+        <div><strong>Premium</strong> AI models</div>
+        <div><strong>Priority</strong> job application workflow</div>
+      </div>
+      <a href="https://job-hunt-easy-dashboard.vercel.app/pricing" target="_blank" class="upgrade-btn">
+        View Pro pricing
+      </a>
+      <button class="later-btn">Keep using free model</button>
+    </div>
+  `
+
+  document.body.appendChild(container)
+
+  const closeBtn = shadowRoot.querySelector('.close') as HTMLButtonElement
+  const laterBtn = shadowRoot.querySelector('.later-btn') as HTMLButtonElement
+  const upgradeBtn = shadowRoot.querySelector('.upgrade-btn') as HTMLAnchorElement
+
+  const close = () => container.remove()
+
+  closeBtn.onclick = close
+  laterBtn.onclick = close
+  upgradeBtn.onclick = close
 }
 
 function showLimitReachedModal() {

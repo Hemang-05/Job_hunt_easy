@@ -267,9 +267,16 @@ export default function LandingPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <Link href="/sign-up?redirect_url=/install" className="cta-white px-9 py-4 text-base">
-                  Fill Any Application in Seconds — It's Free
-                </Link>
+                <SignedOut>
+                  <Link href="/sign-up?redirect_url=/install" className="cta-white px-9 py-4 text-base">
+                    Fill Any Application in Seconds — It's Free
+                  </Link>
+                </SignedOut>
+                <SignedIn>
+                  <Link href="/dashboard" className="cta-white px-9 py-4 text-base">
+                    Go to Dashboard — It's Free
+                  </Link>
+                </SignedIn>
               </div>
               <p className="text-xs text-white/40 mt-4 font-semibold tracking-wide">
                 One click. Your resume. Every field done.
@@ -446,9 +453,16 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
-            <Link href="/sign-up?redirect_url=/install" className="cta-ghost px-10 py-4 text-base whitespace-nowrap">
-              Start for Free
-            </Link>
+            <SignedOut>
+              <Link href="/sign-up?redirect_url=/install" className="cta-ghost px-10 py-4 text-base whitespace-nowrap">
+                Start for Free
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <Link href="/dashboard" className="cta-ghost px-10 py-4 text-base whitespace-nowrap">
+                Go to Dashboard
+              </Link>
+            </SignedIn>
           </div>
 
           {/* Divider */}
@@ -484,9 +498,16 @@ export default function LandingPage() {
             </div>
 
             <div className="text-center">
-              <Link href="/sign-up?redirect_url=/install" className="cta-white inline-block w-full max-w-md px-8 py-5 text-lg">
-                Get Unlimited — $9/mo
-              </Link>
+              <SignedOut>
+                <Link href="/sign-up?redirect_url=/pricing" className="cta-white inline-block w-full max-w-md px-8 py-5 text-lg">
+                  Get Unlimited — $9/mo
+                </Link>
+              </SignedOut>
+              <SignedIn>
+                <Link href="/pricing" className="cta-white inline-block w-full max-w-md px-8 py-5 text-lg">
+                  Get Unlimited — $9/mo
+                </Link>
+              </SignedIn>
               <p className="text-white/35 text-xs font-semibold mt-4 italic">Join thousands already using Pro to land faster</p>
             </div>
           </div>
@@ -505,12 +526,22 @@ export default function LandingPage() {
           <p className="text-white/60 text-lg font-medium mb-12 max-w-xl mx-auto leading-relaxed relative z-10">
             Every job application takes 20–40 minutes of your life.<br />Job Hunt Easy gives that back.
           </p>
-          <Link
-            href="/sign-up?redirect_url=/install"
-            className="cta-white inline-block px-14 py-5 text-xl relative z-10 mb-5"
-          >
-            Add to Chrome — It's Free
-          </Link>
+          <SignedOut>
+            <Link
+              href="/sign-up?redirect_url=/install"
+              className="cta-white inline-block px-14 py-5 text-xl relative z-10 mb-5"
+            >
+              Add to Chrome — It's Free
+            </Link>
+          </SignedOut>
+          <SignedIn>
+            <Link
+              href="/dashboard"
+              className="cta-white inline-block px-14 py-5 text-xl relative z-10 mb-5"
+            >
+              Go to Dashboard
+            </Link>
+          </SignedIn>
           <p className="text-white/35 text-xs font-semibold tracking-wide relative z-10">
             Takes 30 seconds to install. Works immediately.
           </p>
@@ -568,236 +599,28 @@ export default function LandingPage() {
         className="fixed bottom-0 left-0 right-0 p-4 z-50 sm:hidden"
         style={{ background: 'rgba(22,46,147,0.8)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.12)' }}
       >
-        <Link
-          href="/sign-up?redirect_url=/install"
-          className="cta-white block w-full py-4 text-center text-base"
-        >
-          Add to Chrome — It's Free
-        </Link>
+        <SignedOut>
+          <Link
+            href="/sign-up?redirect_url=/install"
+            className="cta-white block w-full py-4 text-center text-base"
+          >
+            Add to Chrome — It's Free
+          </Link>
+        </SignedOut>
+        <SignedIn>
+          <Link
+            href="/dashboard"
+            className="cta-white block w-full py-4 text-center text-base"
+          >
+            Go to Dashboard
+          </Link>
+        </SignedIn>
       </div>
 
     </main>
   )
 }
 
-// 'use client'
-
-// import { useEffect, useState, useRef } from 'react'
-// import Link from 'next/link'
-// import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
-// import { Montserrat } from 'next/font/google'
-// import heroBg from '../public/hero-bg.png'
-
-// const montserrat = Montserrat({ subsets: ['latin'], weight: ['500', '600', '700', '800', '900'] })
-
-// export default function LandingPage() {
-//   const [isScrolled, setIsScrolled] = useState(false)
-
-//   // Intersection Observer for fade-in animations
-//   useEffect(() => {
-//     const observer = new IntersectionObserver(
-//       (entries) => {
-//         entries.forEach((entry) => {
-//           if (entry.isIntersecting) {
-//             entry.target.classList.add('is-visible')
-//           }
-//         })
-//       },
-//       { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-//     )
-
-//     const elements = document.querySelectorAll('.fade-up')
-//     elements.forEach((el) => observer.observe(el))
-
-//     return () => observer.disconnect()
-//   }, [])
-
-//   // Scroll listener for navbar
-//   useEffect(() => {
-//     const handleScroll = () => {
-//       setIsScrolled(window.scrollY > 50)
-//     }
-//     window.addEventListener('scroll', handleScroll)
-//     return () => window.removeEventListener('scroll', handleScroll)
-//   }, [])
-
-//   const platforms = [
-//     { name: 'Workday', style: 'italic font-black tracking-tighter' },
-//     { name: 'Greenhouse', style: 'font-bold tracking-tight' },
-//     { name: 'Lever', style: 'font-medium tracking-wide' },
-//     { name: 'LinkedIn', style: 'font-extrabold' },
-//     { name: 'Indeed', style: 'font-black tracking-tighter italic' },
-//     { name: 'Ashby', style: 'font-semibold tracking-tight' },
-//     { name: 'Bullhorn', style: 'font-bold' },
-//     { name: 'SmartRecruiters', style: 'font-black tracking-tight' },
-//   ]
-
-//   const testimonials = [
-//     {
-//       name: "Priya Sharma",
-//       role: "Product Designer",
-//       landed: "Landed at Airbnb",
-//       quote: "Applying to 20 jobs a day used to be a full-time nightmare. Job Hunt Easy cut my application time down to seconds. I actually had time to prepare for interviews!",
-//       avatar: "PS"
-//     },
-//     {
-//       name: "Rahul Desai",
-//       role: "Software Engineer",
-//       landed: "Landed at Stripe",
-//       quote: "The Workday autofill is magic. It handles those annoying 'experience' blocks perfectly. 10/10 would recommend to anyone in the job market.",
-//       avatar: "RD"
-//     },
-//     {
-//       name: "Ananya Patel",
-//       role: "Marketing Manager",
-//       landed: "Landed at HubSpot",
-//       quote: "I was skeptical about AI form filling, but this is different. It's accurate, fast, and stays on my device. It gave me my life back during my search.",
-//       avatar: "AP"
-//     }
-//   ]
-
-//   return (
-//     <main className="min-h-screen font-sans selection:bg-[#2F2FE4]/30 text-[#E0E4F5] overflow-x-hidden relative bg-[#080616]">
-//       {/* Background Gradient & Noise */}
-//       <div className="fixed inset-0 z-[-2] bg-mesh animate-mesh"></div>
-//       <div className="fixed inset-0 z-[-1] opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
-
-//       {/* Central Radial Glow - Electric Blue at 10% opacity */}
-//       <div className="fixed top-[-20%] left-[50%] -translate-x-1/2 w-[80vw] h-[80vw] bg-[#2F2FE4] rounded-full mix-blend-screen filter blur-[150px] opacity-[0.10] z-[-1] pointer-events-none animate-pulse-slow"></div>
-
-//       {/* Custom Styles */}
-//       <style dangerouslySetInnerHTML={{
-//         __html: `
-//         @keyframes scroll {
-//           0% { transform: translateX(0); }
-//           100% { transform: translateX(-50%); }
-//         }
-//         .animate-scroll {
-//           animation: scroll 40s linear infinite;
-//         }
-//         .animate-scroll:hover {
-//           animation-play-state: paused;
-//         }
-//         @keyframes mesh {
-//           0% { background-position: 0% 50%; }
-//           50% { background-position: 100% 50%; }
-//           100% { background-position: 0% 50%; }
-//         }
-//         .bg-mesh {
-//           background: linear-gradient(-45deg, #080616, #1A1953, #162E93);
-//           background-size: 400% 400%;
-//         }
-//         .animate-pulse-slow {
-//           animation: pulse 12s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-//         }
-//         @keyframes pulse {
-//           0%, 100% { opacity: 0.05; }
-//           50% { opacity: 0.10; }
-//         }
-
-//         /* Glassmorphism Utilities - Deep Indigo */
-//         .glass-tile {
-//           background: linear-gradient(to bottom, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)), rgba(47, 47, 228, 0.07);
-//           backdrop-filter: blur(28px) saturate(150%);
-//           -webkit-backdrop-filter: blur(28px) saturate(150%);
-//           border: 1px solid rgba(47, 47, 228, 0.2);
-//           border-radius: 28px;
-//           box-shadow: 0 12px 40px rgba(8, 6, 22, 0.6);
-//           transition: transform 0.3s ease, border-color 0.3s ease;
-//         }
-//         .glass-tile:hover {
-//           transform: translateY(-4px);
-//           border-color: rgba(47, 47, 228, 0.45);
-//         }
-        
-//         .glass-pill {
-//           background: rgba(26, 25, 83, 0.5);
-//           backdrop-filter: blur(20px) saturate(150%);
-//           -webkit-backdrop-filter: blur(20px) saturate(150%);
-//           border: 1px solid rgba(47, 47, 228, 0.25);
-//           border-radius: 50px;
-//         }
-
-//         /* Fade Up Animation */
-//         .fade-up {
-//           opacity: 0;
-//           transform: translateY(30px);
-//           transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-//         }
-//         .fade-up.is-visible {
-//           opacity: 1;
-//           transform: translateY(0);
-//         }
-//         .delay-100 { transition-delay: 100ms; }
-//         .delay-200 { transition-delay: 200ms; }
-//         .delay-300 { transition-delay: 300ms; }
-//       `}} />
-
-//       {/* Nav */}
-//       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'py-4' : 'py-6'}`}>
-//         <div className={`mx-auto px-6 flex items-center justify-between transition-all duration-300 ${isScrolled ? 'glass-pill max-w-6xl py-3 shadow-[0_8px_30px_rgba(8,6,22,0.6)]' : 'max-w-[1440px] border border-transparent'}`}>
-//           <div className="flex items-center gap-3">
-//             <div className="w-8 h-8 rounded-full bg-[rgba(47,47,228,0.2)] backdrop-blur-sm flex items-center justify-center text-[#FAF3E1] font-black tracking-tight shadow-sm border border-[rgba(47,47,228,0.4)]">
-//               J
-//             </div>
-//             <span className={`${montserrat.className} font-bold text-[#FAF3E1] tracking-tight text-xl hidden sm:block`}>Job Hunt Easy</span>
-//           </div>
-//           <div className="flex items-center gap-8 text-sm font-medium">
-//             <Link href="#how-it-works" className="hidden sm:block text-[#E0E4F5]/70 hover:text-[#FAF3E1] transition-colors">How it works</Link>
-//             <Link href="#pricing" className="hidden sm:block text-[#E0E4F5]/70 hover:text-[#FAF3E1] transition-colors">Pricing</Link>
-//             <SignedOut>
-//               <Link
-//                 href="/sign-up?redirect_url=/install"
-//                 className="bg-[#2F2FE4] text-[#FFFFFF] px-6 py-2.5 rounded-full font-bold hover:opacity-90 transition-all shadow-[0_0_20px_rgba(47,47,228,0.4)] active:scale-95"
-//               >
-//                 Get started
-//               </Link>
-//             </SignedOut>
-//             <SignedIn>
-//               <Link
-//                 href="/dashboard"
-//                 className="font-bold text-[#FAF3E1] hover:text-[#E0E4F5]/90 transition-colors"
-//               >
-//                 Dashboard →
-//               </Link>
-//               <UserButton afterSignOutUrl="/" />
-//             </SignedIn>
-//           </div>
-//         </div>
-//       </nav>
-
-//       {/* HERO SECTION */}
-//       <div className="relative min-h-[90vh] flex flex-col justify-end pb-32 pt-40 px-6 overflow-hidden">
-//         {/* Background Image & Overlay */}
-//         <div className="absolute inset-0 z-[-1] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${heroBg.src})` }}></div>
-//         <div className="absolute inset-0 z-[-1] pointer-events-none" style={{ background: 'linear-gradient(to right, rgba(8,6,22,0.88) 40%, rgba(8,6,22,0.15) 100%)' }}></div>
-
-//         <div className="max-w-[1440px] w-full mx-auto relative z-10 fade-up">
-//           <div className="max-w-2xl">
-//             <div className="inline-flex items-center gap-2 glass-pill text-[#E0E4F5] text-sm font-bold px-5 py-2 mb-8 shadow-sm">
-//               <span className="text-[#2F2FE4]">✦</span> AI-Powered Job Application Tool
-//             </div>
-
-//             <h1 className={`${montserrat.className} text-6xl sm:text-8xl font-bold text-[#FAF3E1] tracking-tight leading-[1.05] mb-8 drop-shadow-xl`}>
-//               Your Resume.<br />
-//               One Click. Applied.
-//             </h1>
-
-//             <p className="text-lg sm:text-xl text-[#E0E4F5] mb-10 max-w-xl leading-relaxed font-medium drop-shadow-md">
-//               Stop retyping the same details on every application. Job Hunt Easy autofills Workday, Greenhouse & Lever in under 3 seconds.
-//             </p>
-
-//             <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-//               <Link
-//                 href="/sign-up?redirect_url=/install"
-//                 className="w-full sm:w-auto bg-[#2F2FE4] text-[#FFFFFF] px-10 py-4 rounded-[14px] text-lg font-bold hover:-translate-y-1 transition-all shadow-[0_0_32px_rgba(47,47,228,0.5)] active:scale-95 text-center"
-//               >
-//                 Add to Chrome — It's Free
-//               </Link>
-//               <p className="text-sm font-medium text-[#E0E4F5]/60 mt-2 sm:mt-0 sm:ml-2">No credit card. 30 seconds to install.</p>
-//             </div>
-//           </div>
-//         </div>
 //       </div>
 
 //       {/* HERO OVERLAPPING THREE CARDS */}

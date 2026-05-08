@@ -6,12 +6,17 @@ export const dynamic = 'force-dynamic'
 
 // ─── CORS for Chrome Extension requests ────────────────────
 function corsHeaders(req: Request) {
-  const origin = req.headers.get('origin') || '*'
+  const origin = req.headers.get('origin')
+  
+  // When allow-credentials is true, allow-origin cannot be '*'
+  // We must return the actual origin or a specific allowed origin
+  const allowedOrigin = origin || process.env.NEXT_PUBLIC_APP_URL || '*'
+  
   return {
-    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Credentials': 'true',
     'Access-Control-Allow-Methods': 'OPTIONS, GET',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, Cookie',
   }
 }
 
@@ -42,9 +47,10 @@ export async function GET(req: NextRequest) {
     if (!profile) {
       return NextResponse.json({
         plan: 'free',
-        sessionsToday: 0,
-        fillsToday: 0,
-        maxSessions: 5
+        sessions_used: 0,
+        fills_used: 0,
+        sessions_limit: 5,
+        reset_in: 'midnight UTC'
       }, { headers: cors })
     }
 
@@ -57,8 +63,14 @@ export async function GET(req: NextRequest) {
       fillsToday = 0
     }
 
+    // Fetch user email from Clerk
+    const { currentUser } = await import('@clerk/nextjs/server')
+    const user = await currentUser()
+    const email = user?.emailAddresses?.[0]?.emailAddress
+
     return NextResponse.json({
       plan: profile.plan,
+      email: email, // Added email to response
       sessions_used: sessionsToday,
       fills_used: fillsToday,
       sessions_limit: profile.plan === 'pro' ? -1 : 5,

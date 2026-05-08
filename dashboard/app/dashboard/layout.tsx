@@ -8,7 +8,8 @@ import { UserButton } from '@clerk/nextjs'
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { SidebarNav } from '@/components/SidebarNav'
-import { LayoutDashboard, FileText, Briefcase, User, Settings } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
+import { LayoutDashboard, FileText, Briefcase, User, Settings, Sparkles } from 'lucide-react'
 
 const NAV_ITEMS = [
   { href: '/dashboard',               label: 'Overview',       icon: <LayoutDashboard className="w-5 h-5" /> },
@@ -25,6 +26,20 @@ export default async function DashboardLayout({
 }) {
   const user = await currentUser()
   if (!user) redirect('/sign-in')
+
+  let plan = 'free'
+  try {
+    const supabase = createClient()
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('plan')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    plan = profile?.plan === 'pro' ? 'pro' : 'free'
+  } catch {
+    plan = 'free'
+  }
 
   return (
     <div className="min-h-screen bg-[#080616] p-4 sm:p-6 lg:p-8 flex items-center justify-center">
@@ -44,7 +59,17 @@ export default async function DashboardLayout({
             <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20">
               J
             </div>
-            <span className="font-bold text-white tracking-tight text-lg">Job Hunt Easy</span>
+            <div className="min-w-0">
+              <span className="font-bold text-white tracking-tight text-lg">Job Hunt Easy</span>
+              <div className={`mt-1 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-widest border ${
+                plan === 'pro'
+                  ? 'bg-indigo-500/20 text-indigo-200 border-indigo-400/25'
+                  : 'bg-white/5 text-white/45 border-white/10'
+              }`}>
+                <Sparkles className="w-3 h-3" />
+                {plan === 'pro' ? 'Pro plan' : 'Free plan'}
+              </div>
+            </div>
           </div>
   
           {/* Nav */}
@@ -62,6 +87,9 @@ export default async function DashboardLayout({
               </div>
               <div className="text-[10px] text-white/40 truncate font-medium">
                 {user.emailAddresses[0]?.emailAddress}
+              </div>
+              <div className="text-[10px] text-white/30 truncate font-black uppercase tracking-wider mt-1">
+                {plan === 'pro' ? 'Pro access active' : 'Free access'}
               </div>
             </div>
           </div>

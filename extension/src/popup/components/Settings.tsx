@@ -1,19 +1,40 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useExtensionStore } from '../store'
-import { SUPPORTED_MODELS } from '@job-hunt-easy/types'
+import { DEFAULT_SETTINGS, SUPPORTED_MODELS } from '@job-hunt-easy/types'
 import type { AnswerTone } from '@job-hunt-easy/types'
+import { API_BASE_URL } from '../../shared/utils'
 
 // ─── Model Selector ────────────────────────────────────────
 
-export function ModelSelector() {
+export function ModelSelector({ plan = 'free' }: { plan?: 'free' | 'pro' }) {
   const { settings, updateSettings } = useExtensionStore()
+  const [showUpsell, setShowUpsell] = useState(false)
+
+  useEffect(() => {
+    const currentModel = SUPPORTED_MODELS.find((m) => m.id === settings.model)
+    if (plan !== 'pro' && currentModel && !currentModel.free) {
+      updateSettings({ model: DEFAULT_SETTINGS.model })
+    }
+  }, [plan, settings.model, updateSettings])
+
+  function handleModelChange(modelId: string) {
+    const selected = SUPPORTED_MODELS.find((m) => m.id === modelId)
+
+    if (selected && !selected.free && plan !== 'pro') {
+      setShowUpsell(true)
+      return
+    }
+
+    setShowUpsell(false)
+    updateSettings({ model: modelId })
+  }
 
   return (
     <div className="space-y-1.5">
       <label className="text-xs font-bold uppercase tracking-widest text-white/50">AI Model</label>
       <select
         value={settings.model}
-        onChange={(e) => updateSettings({ model: e.target.value })}
+        onChange={(e) => handleModelChange(e.target.value)}
         className="w-full text-xs border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#2F2FE4] bg-black/40 text-white shadow-inner"
       >
         <optgroup label="Free Models" className="bg-[#080616]">
@@ -24,11 +45,26 @@ export function ModelSelector() {
         <optgroup label="Premium Models (Pro)" className="bg-[#080616]">
           {SUPPORTED_MODELS.filter(m => !m.free).map((m) => (
             <option key={m.id} value={m.id}>
-              {m.label.replace(' (Pro)', '')} 🔒
+              {m.label.replace(' (Pro)', '')} {plan === 'pro' ? '✦' : '🔒'}
             </option>
           ))}
         </optgroup>
       </select>
+
+      {showUpsell && (
+        <div className="mt-3 rounded-xl border border-indigo-400/25 bg-indigo-500/10 p-3">
+          <div className="text-xs font-black text-white mb-1">Unlock premium AI models</div>
+          <p className="text-[11px] text-white/55 leading-relaxed mb-3">
+            Pro includes premium models, unlimited applications, and no 5-session daily cap.
+          </p>
+          <button
+            onClick={() => chrome.tabs.create({ url: `${API_BASE_URL}/pricing` })}
+            className="w-full rounded-lg bg-[#6366f1] px-3 py-2 text-[11px] font-black text-white hover:bg-[#818cf8] transition-colors"
+          >
+            View Pro pricing
+          </button>
+        </div>
+      )}
     </div>
   )
 }

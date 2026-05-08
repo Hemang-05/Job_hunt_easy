@@ -5,12 +5,14 @@ import { createClient } from '@/lib/supabase/server'
 
 // ─── CORS for Chrome Extension requests ────────────────────
 function corsHeaders(req: Request) {
-  const origin = req.headers.get('origin') || '*'
+  const origin = req.headers.get('origin')
+  const allowedOrigin = origin || process.env.NEXT_PUBLIC_APP_URL || '*'
+  
   return {
-    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Credentials': 'true',
     'Access-Control-Allow-Methods': 'OPTIONS, POST',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, Cookie',
   }
 }
 
