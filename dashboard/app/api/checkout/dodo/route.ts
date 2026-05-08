@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     const apiKey = process.env.DODO_PAYMENTS_API_KEY
     const productId = process.env.NEXT_PUBLIC_DODO_PRODUCT_ID
-    
+
     // Dynamically determine the app URL based on the request origin
     // This ensures that if the user is using a Cloudflare tunnel (HTTPS), 
     // they are redirected back to the tunnel URL instead of localhost (HTTP),
@@ -66,9 +66,13 @@ export async function POST(req: NextRequest) {
       return_url: `${appUrl}/dashboard/pro-welcome?success=true`,
     }
 
-    console.log('[Checkout] Creating session for:', email)
+    // Use the production endpoint if we are not on localhost
+    const isLocal = appUrl.includes('localhost') || appUrl.includes('127.0.0.1')
+    const dodoBaseUrl = isLocal ? 'https://test.dodopayments.com' : 'https://live.dodopayments.com'
 
-    const response = await fetch('https://test.dodopayments.com/subscriptions', {
+    console.log(`[Checkout] Creating session via ${dodoBaseUrl} for:`, email)
+
+    const response = await fetch(`${dodoBaseUrl}/subscriptions`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
