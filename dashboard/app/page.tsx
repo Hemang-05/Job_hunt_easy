@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import { Montserrat } from 'next/font/google'
-import { Sparkles, Star, Repeat, Zap, TrendingUp, FileText, CheckCircle, Shield, EyeOff, Eye, Lock } from 'lucide-react'
+import { Sparkles, Star, Repeat, Zap, TrendingUp, FileText, CheckCircle, Shield, EyeOff, Eye, Lock, Play, Check, X } from 'lucide-react'
 import heroBg from '../public/hero-bg.png'
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['500', '600', '700', '800', '900'] })
@@ -212,9 +213,7 @@ export default function LandingPage() {
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'py-3 px-6' : 'py-6 px-6'}`}>
         <div className={`mx-auto flex items-center justify-between transition-all duration-500 border ${isScrolled ? 'nav-scrolled max-w-5xl px-6 py-3' : 'max-w-[1440px] border-transparent rounded-full'}`}>
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full glass-pill flex items-center justify-center text-white font-black text-sm border border-white/30">
-              J
-            </div>
+            <Image src="/logo.png" alt="Job Hunt Easy" width={32} height={32} className="rounded-full" />
             <span className="font-bold text-white tracking-tight text-xl hidden sm:block">Job Hunt Easy</span>
           </div>
           <div className="flex items-center gap-8 text-sm font-semibold">
@@ -252,54 +251,103 @@ export default function LandingPage() {
           <div className="relative flex flex-col md:flex-row min-h-[560px]">
 
             {/* Left Content Container */}
-            <div className="relative z-10 flex flex-col justify-center px-10 sm:px-14 py-16 md:w-[58%] flex-shrink-0">
+            <div className="relative z-10 flex flex-col justify-center px-6 sm:px-14 py-10 md:py-16 md:w-[58%] flex-shrink-0">
               {/* Eyebrow */}
               <div className="inline-flex items-center gap-2 glass-pill text-white/80 text-xs font-bold px-5 py-2 mb-8 w-fit">
                 <Sparkles className="w-4 h-4 text-white" /> AI-Powered Job Application Autofill
               </div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-medium text-white tracking-tight leading-[1.05] mb-6">
-                Same Questions. Different Form. <span className="text-white/50">Every. Single. Time.</span>
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.05] mb-6">
+                Stop Filling the Same Job Applications <span className="text-white/50">Again and Again</span>
               </h1>
 
               <p className="text-base sm:text-lg text-white/75 mb-10 max-w-lg leading-relaxed">
-                Job hunting is exhausting. Your application form shouldn't be. Upload your resume once and let AI complete every field in seconds.
+                Job Hunt Easy autofills applications across <strong>Workday, LinkedIn, Greenhouse, Lever</strong>, and more using your resume and AI-generated answers.
               </p>
 
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 <SignedOut>
-                  <Link href="/sign-up?redirect_url=/install" className="cta-white px-9 py-4 text-base">
-                    Fill Any Application in Seconds — It's Free
+                  <Link href="/sign-up?redirect_url=/install" className="cta-white px-9 py-4 text-base flex items-center gap-2">
+                    Add to Chrome
+                  </Link>
+                  <Link href="#how-it-works" className="cta-ghost px-9 py-4 text-base flex items-center gap-2">
+                    <Play className="w-4 h-4" /> Watch Demo
                   </Link>
                 </SignedOut>
                 <SignedIn>
                   <Link href="/dashboard" className="cta-white px-9 py-4 text-base">
-                    Go to Dashboard — It's Free
+                    Go to Dashboard
+                  </Link>
+                  <Link href="#how-it-works" className="cta-ghost px-9 py-4 text-base flex items-center gap-2">
+                    <Play className="w-4 h-4" /> Watch Demo
                   </Link>
                 </SignedIn>
               </div>
-              <p className="text-xs text-white/40 mt-4 font-semibold tracking-wide">
-                One click. Your resume. Every field done.
-              </p>
 
-              {/* Trust pill */}
-              <div className="mt-10 flex items-center gap-3">
-                <div className="flex gap-0.5">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />)}
-                </div>
-                <span className="text-white/50 text-xs font-semibold">Trusted by 10,000+ job seekers</span>
+              {/* Trust Strip */}
+              <div className="mt-8 grid grid-cols-2 gap-y-3 gap-x-6">
+                {[
+                  'Works on Workday',
+                  'AI-generated answers',
+                  'Privacy-first',
+                  'Setup in under 2 minutes'
+                ].map((text, i) => (
+                  <div key={i} className="flex items-center gap-2 text-white/60 text-xs font-bold">
+                    <CheckCircle className="w-4 h-4 text-green-400" /> {text}
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Right Image — Reduced size floating card to avoid pixelation */}
-            <div className="relative md:absolute md:right-12 md:top-12 md:bottom-12 md:w-[38%] overflow-hidden rounded-[32px] z-0 shadow-2xl border border-white/10 hidden md:block">
-              <img
-                src={heroBg.src}
-                alt="Job seeker filling applications"
-                className="w-full h-full object-cover"
-              />
-              {/* Subtle darkening overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0d1c30]/40 to-transparent" />
+            {/* Comparison Block */}
+            <div className="relative md:absolute md:right-8 md:top-10 md:bottom-10 md:w-[42%] flex flex-col justify-center hidden md:flex">
+              <div className="glass-tile p-8 border-white/20 bg-white/5 backdrop-blur-xl scale-105">
+                <h3 className="text-white font-bold text-center mb-8 uppercase tracking-widest text-sm opacity-50">Why Wait?</h3>
+                
+                <div className="space-y-6">
+                  {/* Headers */}
+                  <div className="grid grid-cols-2 gap-6 border-b border-white/10 pb-3">
+                    <div className="text-white/40 text-xs font-black uppercase">Manual Applying</div>
+                    <div className="text-blue-400 text-xs font-black uppercase">Job Hunt Easy</div>
+                  </div>
+
+                  {/* Row 1 */}
+                  <div className="grid grid-cols-2 gap-6 items-center">
+                    <div className="flex items-center gap-3 text-white/60 text-sm">
+                      <X className="w-4 h-4 text-red-400 flex-shrink-0" /> 20–30 mins/app
+                    </div>
+                    <div className="flex items-center gap-3 text-white font-bold text-sm">
+                      <Check className="w-4 h-4 text-green-400 flex-shrink-0" /> 2–5 mins
+                    </div>
+                  </div>
+
+                  {/* Row 2 */}
+                  <div className="grid grid-cols-2 gap-6 items-center">
+                    <div className="flex items-center gap-3 text-white/60 text-sm">
+                      <X className="w-4 h-4 text-red-400 flex-shrink-0" /> Repetitive typing
+                    </div>
+                    <div className="flex items-center gap-3 text-white font-bold text-sm">
+                      <Check className="w-4 h-4 text-green-400 flex-shrink-0" /> One-click autofill
+                    </div>
+                  </div>
+
+                  {/* Row 3 */}
+                  <div className="grid grid-cols-2 gap-6 items-center">
+                    <div className="flex items-center gap-3 text-white/60 text-sm">
+                      <X className="w-4 h-4 text-red-400 flex-shrink-0" /> Burnout
+                    </div>
+                    <div className="flex items-center gap-3 text-white font-bold text-sm">
+                      <Check className="w-4 h-4 text-green-400 flex-shrink-0" /> Faster applications
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-10 pt-6 border-t border-white/10 text-center">
+                  <div className="inline-flex items-center gap-2 text-xs font-bold text-white uppercase tracking-widest">
+                    <Zap className="w-4 h-4 fill-yellow-400 text-yellow-400" /> Save ~15 hours/week
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -531,7 +579,7 @@ export default function LandingPage() {
               href="/sign-up?redirect_url=/install"
               className="cta-white inline-block px-14 py-5 text-xl relative z-10 mb-5"
             >
-              Add to Chrome — It's Free
+              Add to Chrome
             </Link>
           </SignedOut>
           <SignedIn>
@@ -552,10 +600,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
             <div className="col-span-2">
               <div className="flex items-center gap-2 mb-5">
-                <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-black"
-                  style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)' }}
-                >J</div>
+                <Image src="/logo.png" alt="Job Hunt Easy" width={28} height={28} className="rounded-full" />
                 <span className="font-black text-white text-lg tracking-tight">Job Hunt Easy</span>
               </div>
               <p className="text-white/40 text-sm font-medium leading-relaxed max-w-xs">
@@ -604,7 +649,7 @@ export default function LandingPage() {
             href="/sign-up?redirect_url=/install"
             className="cta-white block w-full py-4 text-center text-base"
           >
-            Add to Chrome — It's Free
+            Add to Chrome
           </Link>
         </SignedOut>
         <SignedIn>
@@ -796,7 +841,7 @@ export default function LandingPage() {
 //             href="/sign-up?redirect_url=/install"
 //             className="inline-block bg-[#2F2FE4] text-[#FFFFFF] px-12 py-5 rounded-[14px] text-xl font-bold hover:-translate-y-1 transition-all shadow-[0_0_32px_rgba(47,47,228,0.5)] active:scale-95 mb-6 relative z-10"
 //           >
-//             Add to Chrome — It's Free
+//             Add to Chrome
 //           </Link>
 //           <p className="text-sm font-medium text-[#E0E4F5]/60 tracking-wide relative z-10">
 //             Takes 30 seconds to install. Works immediately.

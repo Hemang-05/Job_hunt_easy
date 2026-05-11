@@ -1,20 +1,30 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { ArrowLeft, MessageSquare, Star, Send, CheckCircle2 } from 'lucide-react'
+import { Send, CheckCircle2, RefreshCw, Heart, Zap, Bug, Lightbulb, DollarSign, LayoutGrid } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
+
+const CHROME_STORE_URL = 'https://chrome.google.com/webstore/detail/job-hunt-easy/YOUR_EXTENSION_ID'
+
+const REASONS = [
+  { value: 'technical', label: 'Had bugs or technical issues', icon: Bug },
+  { value: 'difficult', label: 'Too difficult to use', icon: LayoutGrid },
+  { value: 'missing', label: 'Missing features I need', icon: Lightbulb },
+  { value: 'expensive', label: 'Pricing felt too high', icon: DollarSign },
+  { value: 'alternative', label: 'Found a better alternative', icon: Zap },
+]
 
 export default function UninstallPage() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
+  const [selectedReason, setSelectedReason] = useState('')
+  const [feedback, setFeedback] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    // Simulate submission
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    await new Promise(resolve => setTimeout(resolve, 1200))
     setLoading(false)
     setSubmitted(true)
   }
@@ -26,18 +36,27 @@ export default function UninstallPage() {
           <div className="w-24 h-24 bg-emerald-500/10 rounded-[32px] flex items-center justify-center mx-auto border border-emerald-500/20 shadow-[0_0_40px_rgba(16,185,129,0.1)]">
             <CheckCircle2 className="w-12 h-12 text-emerald-400" />
           </div>
-          <div className="space-y-4">
-            <h1 className="text-3xl font-black text-white tracking-tight">Thank you for the feedback</h1>
+          <div className="space-y-3">
+            <h1 className="text-3xl font-black text-white tracking-tight">Thank you for your feedback</h1>
             <p className="text-white/50 font-medium leading-relaxed">
-              We&apos;ve received your survey. Your input helps us make Job Hunt Easy better for everyone.
+              We genuinely read every response. Your input helps us build something better.
             </p>
           </div>
-          <div className="pt-8">
-            <Link 
-              href="/"
-              className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-bold transition-colors"
+          <div className="pt-4 space-y-3">
+            <a
+              href={CHROME_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-3.5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
-              <ArrowLeft className="w-4 h-4" /> Back to Home
+              <RefreshCw className="w-4 h-4" />
+              Reactivate Extension
+            </a>
+            <Link
+              href="/"
+              className="block text-center text-white/30 hover:text-white/60 text-sm font-medium transition-colors py-2"
+            >
+              Back to Home
             </Link>
           </div>
         </div>
@@ -48,111 +67,112 @@ export default function UninstallPage() {
   return (
     <div className="min-h-screen bg-[#080616] flex flex-col items-center justify-center p-6 relative overflow-hidden">
       {/* Background Glows */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/8 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="max-w-xl w-full relative z-10">
-        <div className="text-center mb-12 space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-white/40 tracking-widest uppercase mb-4">
-            Survey
+      <div className="max-w-lg w-full relative z-10">
+        {/* Logo + Header */}
+        <div className="text-center mb-10 space-y-5">
+          <div className="flex justify-center">
+            <Image
+              src="/logo.png"
+              alt="Job Hunt Easy"
+              width={64}
+              height={64}
+              className="rounded-2xl shadow-[0_0_30px_rgba(99,102,241,0.3)]"
+            />
           </div>
-          <h1 className="text-4xl font-black text-white tracking-tight">We&apos;re sorry to see you go</h1>
-          <p className="text-white/50 text-lg font-medium leading-relaxed">
-            Could you help us improve with a 30 second survey?
-          </p>
+
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-rose-500/10 border border-rose-500/20 rounded-full text-rose-400 text-xs font-bold tracking-widest uppercase">
+              <Heart className="w-3 h-3" />
+              We&apos;ll Miss You
+            </div>
+            <h1 className="text-4xl font-black text-white tracking-tight leading-tight">
+              Please Stay — We&apos;re<br />
+              <span className="text-indigo-400">Getting Better</span>
+            </h1>
+            <p className="text-white/50 text-base font-medium leading-relaxed max-w-sm mx-auto">
+              We&apos;re actively improving Job Hunt Easy every week. Your feedback helps us fix what matters most.
+            </p>
+          </div>
+
+          {/* Reactivate CTA — prominent above feedback form */}
+          <a
+            href={CHROME_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-indigo-500 hover:bg-indigo-400 text-white font-bold px-8 py-3.5 rounded-2xl transition-all hover:scale-[1.03] active:scale-[0.98] shadow-[0_8px_30px_rgba(99,102,241,0.3)]"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Reactivate Extension
+          </a>
         </div>
 
-        <form onSubmit={handleSubmit} className="glass-tile p-10 space-y-8">
-          <div className="grid grid-cols-1 gap-8">
-            {/* Reason Dropdown */}
+        {/* Feedback Form */}
+        <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-8 space-y-6">
+          <p className="text-xs font-black text-white/30 uppercase tracking-widest text-center">
+            Or help us improve — 30 second survey
+          </p>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Reason pills */}
             <div className="space-y-3">
-              <label className="text-xs font-black text-white/40 uppercase tracking-widest ml-1">
-                What made you uninstall?*
+              <label className="text-xs font-black text-white/40 uppercase tracking-widest">
+                Why did you uninstall?
               </label>
-              <div className="relative group">
-                <select 
-                  required
-                  className="w-full bg-white/5 border border-white/10 text-white rounded-2xl px-6 py-4 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all font-medium group-hover:bg-white/[0.08]"
-                >
-                  <option value="" className="bg-[#0d1c30]">Select a reason...</option>
-                  <option value="technical" className="bg-[#0d1c30]">Technical issues / Bugs</option>
-                  <option value="difficult" className="bg-[#0d1c30]">Too difficult to use</option>
-                  <option value="missing" className="bg-[#0d1c30]">Missing key features</option>
-                  <option value="expensive" className="bg-[#0d1c30]">Too expensive</option>
-                  <option value="other" className="bg-[#0d1c30]">Found a better alternative</option>
-                </select>
-                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
-                  <MessageSquare className="w-5 h-5" />
-                </div>
+              <div className="grid grid-cols-1 gap-2">
+                {REASONS.map(({ value, label, icon: Icon }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setSelectedReason(value)}
+                    className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl border text-left text-sm font-medium transition-all ${
+                      selectedReason === value
+                        ? 'border-indigo-500/60 bg-indigo-500/15 text-white'
+                        : 'border-white/10 bg-white/[0.03] text-white/50 hover:border-white/20 hover:text-white/80 hover:bg-white/[0.06]'
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 shrink-0 ${selectedReason === value ? 'text-indigo-400' : 'text-white/30'}`} />
+                    {label}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Ease of Use Dropdown */}
-            <div className="space-y-3">
-              <label className="text-xs font-black text-white/40 uppercase tracking-widest ml-1">
-                How would you rate our ease of use?*
+            {/* Open feedback */}
+            <div className="space-y-2">
+              <label className="text-xs font-black text-white/40 uppercase tracking-widest">
+                Anything else you&apos;d like us to know?
               </label>
-              <div className="relative group">
-                <select 
-                  required
-                  className="w-full bg-white/5 border border-white/10 text-white rounded-2xl px-6 py-4 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all font-medium group-hover:bg-white/[0.08]"
-                >
-                  <option value="" className="bg-[#0d1c30]">Select a rating...</option>
-                  <option value="5" className="bg-[#0d1c30]">5 - Excellent</option>
-                  <option value="4" className="bg-[#0d1c30]">4 - Very Good</option>
-                  <option value="3" className="bg-[#0d1c30]">3 - Average</option>
-                  <option value="2" className="bg-[#0d1c30]">2 - Poor</option>
-                  <option value="1" className="bg-[#0d1c30]">1 - Very Poor</option>
-                </select>
-                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
-                  <Star className="w-5 h-5" />
-                </div>
-              </div>
-            </div>
-
-            {/* Features Textarea */}
-            <div className="space-y-3">
-              <label className="text-xs font-black text-white/40 uppercase tracking-widest ml-1">
-                Issue and/or missing features
-              </label>
-              <textarea 
-                placeholder="Tell us more about your experience..."
-                rows={4}
-                className="w-full bg-white/5 border border-white/10 text-white rounded-2xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all font-medium hover:bg-white/[0.08] resize-none"
+              <textarea
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+                placeholder="Tell us what we can improve..."
+                rows={3}
+                className="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/40 transition-all text-sm font-medium hover:bg-white/[0.07] resize-none placeholder-white/20"
               />
             </div>
 
-            {/* Email Field */}
-            <div className="space-y-3">
-              <label className="text-xs font-black text-white/40 uppercase tracking-widest ml-1">
-                Your email (optional)
-              </label>
-              <input 
-                type="email"
-                placeholder="email@example.com"
-                className="w-full bg-white/5 border border-white/10 text-white rounded-2xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all font-medium hover:bg-white/[0.08]"
-              />
-            </div>
-          </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-white/10 hover:bg-white/15 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-3 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:scale-100 border border-white/10"
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  Send Feedback
+                </>
+              )}
+            </button>
+          </form>
+        </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-white text-[#1A1953] font-black py-5 rounded-2xl flex items-center justify-center gap-3 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:scale-100 shadow-[0_20px_40px_rgba(255,255,255,0.1)]"
-          >
-            {loading ? (
-              <div className="w-6 h-6 border-4 border-[#1A1953]/20 border-t-[#1A1953] rounded-full animate-spin" />
-            ) : (
-              <>
-                <Send className="w-5 h-5" />
-                Submit Feedback
-              </>
-            )}
-          </button>
-        </form>
-
-        <p className="text-center mt-12 text-white/20 text-xs font-bold tracking-widest uppercase">
-          &copy; {new Date().getFullYear()} Job Hunt Easy. All rights reserved.
+        <p className="text-center mt-8 text-white/15 text-xs font-bold tracking-widest uppercase">
+          © {new Date().getFullYear()} Job Hunt Easy
         </p>
       </div>
     </div>

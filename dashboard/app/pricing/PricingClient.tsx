@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Check, Zap, X } from 'lucide-react'
+import { Check, Zap, X, ArrowLeft } from 'lucide-react'
+import Image from 'next/image'
 
 const FREE_FEATURES = [
   { text: '5 autofill sessions per day', included: true },
@@ -99,7 +100,21 @@ export default function PricingClient({ initialUser, initialPlan }: PricingClien
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center px-4 py-20">
+      {/* Back to Dashboard */}
+      <div className="w-full max-w-3xl mb-8">
+        <button
+          onClick={() => router.push('/dashboard')}
+          className="inline-flex items-center gap-2 text-white/40 hover:text-white text-sm font-medium transition-colors group"
+        >
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+          Back to Dashboard
+        </button>
+      </div>
+
       <div className="text-center mb-14">
+        <div className="flex justify-center mb-6">
+          <Image src="/logo.png" alt="Job Hunt Easy" width={48} height={48} className="rounded-xl" />
+        </div>
         <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-4 py-1.5 text-indigo-400 text-sm font-medium mb-6">
           <Zap className="w-3.5 h-3.5" />
           Simple pricing

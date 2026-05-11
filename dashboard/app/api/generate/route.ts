@@ -132,9 +132,10 @@ export async function POST(req: Request) {
     if (model === 'gemini-2.5-flash-preview-05-20') {
       console.log('[API Generate] Mapping retired model to stable: gemini-2.5-flash')
       model = 'gemini-2.5-flash'
-    } else if (model === 'qwen/qwen3-235b-a22b:free') {
-      console.log('[API Generate] Mapping retired model to stable: qwen/qwen3-next-80b-a3b-instruct:free')
-      model = 'qwen/qwen3-next-80b-a3b-instruct:free'
+    } else if (model === 'qwen/qwen3-235b-a22b:free' || model === 'qwen/qwen3-next-80b-a3b-instruct:free') {
+      // Qwen models removed due to 401 auth errors — migrate to Llama 3.3 70B
+      console.log('[API Generate] Mapping retired Qwen model to: meta-llama/llama-3.3-70b-instruct:free')
+      model = 'meta-llama/llama-3.3-70b-instruct:free'
     }
 
     // Determine provider from the SUPPORTED_MODELS list
