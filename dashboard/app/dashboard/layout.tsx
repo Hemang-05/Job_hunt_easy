@@ -5,6 +5,7 @@
 // ============================================================
 
 import { UserButton } from '@clerk/nextjs'
+import Image from 'next/image'
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { SidebarNav } from '@/components/SidebarNav'
@@ -56,8 +57,8 @@ export default async function DashboardLayout({
         <aside className="w-64 border-r border-white/5 flex flex-col relative z-10 bg-white/2 backdrop-blur-md">
           {/* Logo */}
           <div className="flex items-center gap-3 px-6 py-8">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20">
-              J
+            <div className="w-8 h-8 flex-shrink-0 shadow-lg shadow-indigo-500/20 rounded-lg overflow-hidden">
+              <Image src="/logo.png" alt="Logo" width={32} height={32} className="w-full h-full object-cover" />
             </div>
             <div className="min-w-0">
               <span className="font-bold text-white tracking-tight text-lg">Job Hunt Easy</span>
