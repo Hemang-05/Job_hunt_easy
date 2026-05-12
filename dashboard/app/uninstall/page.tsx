@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Send, CheckCircle2, RefreshCw, Heart, Zap, Bug, Lightbulb, DollarSign, LayoutGrid } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { SignedIn, UserButton, useUser } from '@clerk/nextjs'
 
 const CHROME_STORE_URL = 'https://chrome.google.com/webstore/detail/job-hunt-easy/YOUR_EXTENSION_ID'
 
@@ -21,10 +22,20 @@ export default function UninstallPage() {
   const [selectedReason, setSelectedReason] = useState('')
   const [feedback, setFeedback] = useState('')
 
+  const { user } = useUser()
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    await new Promise(resolve => setTimeout(resolve, 1200))
+    try {
+      await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: selectedReason, text: feedback }),
+      })
+    } catch (err) {
+      console.error(err)
+    }
     setLoading(false)
     setSubmitted(true)
   }
@@ -69,6 +80,15 @@ export default function UninstallPage() {
       {/* Background Glows */}
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/8 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="absolute top-6 right-6 z-20 flex items-center gap-3 bg-white/5 pr-2 pl-4 py-2 rounded-full border border-white/10">
+        {user?.emailAddresses?.[0]?.emailAddress && (
+          <span className="text-xs font-medium text-white/50">{user.emailAddresses[0].emailAddress}</span>
+        )}
+        <SignedIn>
+          <UserButton afterSignOutUrl="/" />
+        </SignedIn>
+      </div>
 
       <div className="max-w-lg w-full relative z-10">
         {/* Logo + Header */}

@@ -34,12 +34,13 @@ ${background}
 ## Critical Instructions
 1. READ THE QUESTION CAREFULLY. If it contains multiple parts (e.g. "What did you build? What was the stack?"), you MUST address every single part in your response.
 2. Pick ONE highly relevant project or experience from the applicant's background to focus on if asked for a specific example. Do not give a generic summary of their whole career.
-3. If the background does not contain the exact information asked for, synthesize the closest possible relevant skills without inventing lies.
+3. If the background does not contain the exact information asked for, synthesize the closest possible relevant skills without inventing lies. If there is absolutely no relevant information (for example, asking for a GitHub link when none is provided), return EXACTLY the string \`NO_INFO_AVAILABLE\`.
 4. Answer directly in the first person ("I", "my").
 5. ${toneInstruction}
 6. STRICTLY NO making up companies, timelines, or technologies not present in the background.
 7. STRICTLY NO "filler" phrases, greetings, subject lines, or AI disclaimers (e.g. "Here is an answer:", "Based on the background").
 8. Get straight to the point. Answer ONLY what is asked. Keep it under 150 words unless the question demands a longer essay.
+9. DO NOT use markdown formatting. Return plain text only. NO asterisks (**), NO bold text, NO bullet points.
 
 Answer:`
 }

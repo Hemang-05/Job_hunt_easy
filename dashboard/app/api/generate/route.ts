@@ -79,6 +79,12 @@ export async function POST(req: Request) {
 
     console.log(`[API Generate] Session check: domain="${domain}", activeSession=${!!activeSession}, sessionsToday=${sessionsToday}`)
 
+    // Strict Limit Enforcer
+    if (sessionsToday >= 5 && profile.plan === 'free') {
+      console.log(`[API Generate] BLOCKED: Free user hit daily limit (${sessionsToday}/5) - blocking all domains`)
+      return NextResponse.json({ error: 'DAILY_LIMIT_REACHED' }, { status: 403, headers: cors })
+    }
+
     if (activeSession) {
       // Continuation — same domain today, just update fill count
       await supabase
@@ -92,11 +98,6 @@ export async function POST(req: Request) {
       fillsToday++
     } else {
       // New application on a new domain
-      if (sessionsToday >= 5 && profile.plan === 'free') {
-        console.log(`[API Generate] BLOCKED: Free user hit daily limit (${sessionsToday}/5)`)
-        return NextResponse.json({ error: 'DAILY_LIMIT_REACHED' }, { status: 403, headers: cors })
-      }
-
       // Insert new session (ignore duplicate errors from race conditions)
       const { error: sessionError } = await supabase
         .from('sessions')

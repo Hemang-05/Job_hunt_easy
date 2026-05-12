@@ -50,6 +50,12 @@ async function authenticatedFetch(url: string, options: RequestInit = {}) {
 // Chrome kills idle service workers. The content script pings
 // us every 20s to prevent that during active sessions.
 
+// ─── Uninstall URL ─────────────────────────────────────────
+// When the extension is removed, open the retention/feedback page
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.runtime.setUninstallURL('https://job-hunt-easy-dashboard.vercel.app/uninstall')
+})
+
 chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
   if (message.type === 'KEEP_ALIVE') return true
 })
@@ -159,6 +165,8 @@ async function handleFillRequest(
       fieldId,
       pageUrl,
       onComplete: async (fullAnswer) => {
+        if (fullAnswer.trim() === 'NO_INFO_AVAILABLE') return;
+
         // Save to cache after successful generation
         await saveToCache({
           question,
@@ -306,10 +314,11 @@ async function streamFromAPI({
       json.candidates?.[0]?.content?.parts?.[0]?.text ||
       ''
     if (text) {
-      fullAnswer = text
+      const strippedText = text.replace(/\*/g, '')
+      fullAnswer += strippedText
       sendToTab(tabId, {
         type: 'STREAM_CHUNK',
-        payload: { chunk: text, fieldId },
+        payload: { chunk: strippedText, fieldId },
       })
     }
   }
@@ -342,10 +351,11 @@ async function streamFromAPI({
             json.choices?.[0]?.message?.content ??
             ''
           if (text) {
-            fullAnswer += text
+            const strippedText = text.replace(/\*/g, '')
+            fullAnswer += strippedText
             sendToTab(tabId, {
               type: 'STREAM_CHUNK',
-              payload: { chunk: text, fieldId },
+              payload: { chunk: strippedText, fieldId },
             })
           }
         } catch {
@@ -369,10 +379,11 @@ async function streamFromAPI({
           json.candidates?.[0]?.content?.parts?.[0]?.text ||
           ''
         if (text) {
-          fullAnswer = text
+          const strippedText = text.replace(/\*/g, '')
+          fullAnswer += strippedText
           sendToTab(tabId, {
             type: 'STREAM_CHUNK',
-            payload: { chunk: text, fieldId },
+            payload: { chunk: strippedText, fieldId },
           })
         }
       } catch {
@@ -382,6 +393,19 @@ async function streamFromAPI({
   }
 
   // ── Final: send result or error ────────────────────────
+  if (fullAnswer.trim() === 'NO_INFO_AVAILABLE') {
+    console.debug('[Job Hunt Easy] AI returned NO_INFO_AVAILABLE')
+    sendToTab(tabId, {
+      type: 'ERROR',
+      payload: {
+        fieldId,
+        code: 'NO_INFO_AVAILABLE',
+        message: 'NO_INFO_AVAILABLE',
+      },
+    })
+    return
+  }
+
   if (fullAnswer) {
     console.debug('[Job Hunt Easy] Stream complete. Answer length:', fullAnswer.length)
     sendToTab(tabId, {

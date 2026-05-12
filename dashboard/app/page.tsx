@@ -7,11 +7,14 @@ import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import { Montserrat } from 'next/font/google'
 import { Sparkles, Star, Repeat, Zap, TrendingUp, FileText, CheckCircle, Shield, EyeOff, Eye, Lock, Play, Check, X } from 'lucide-react'
 import heroBg from '../public/hero-bg.png'
+import { useBrowser } from '@/hooks/useBrowser'
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['500', '600', '700', '800', '900'] })
 
 export default function LandingPage() {
   const [isScrolled, setIsScrolled] = useState(false)
+  const browserName = useBrowser()
+  const extText = browserName ? (browserName === 'Safari' || browserName === 'Firefox' ? 'Get Extension' : `Add to ${browserName}`) : 'Add to Chrome'
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -268,7 +271,7 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 <SignedOut>
                   <Link href="/sign-up?redirect_url=/install" className="cta-white px-9 py-4 text-base flex items-center gap-2">
-                    Add to Chrome
+                    {extText}
                   </Link>
                   <Link href="#how-it-works" className="cta-ghost px-9 py-4 text-base flex items-center gap-2">
                     <Play className="w-4 h-4" /> Watch Demo
@@ -441,7 +444,7 @@ export default function LandingPage() {
 
           <div className="text-center">
             <Link href="/sign-up?redirect_url=/install" className="cta-white inline-block px-10 py-4 text-base">
-              Try It Free — Add to Chrome
+              Try It Free — {extText}
             </Link>
           </div>
         </div>
@@ -579,7 +582,7 @@ export default function LandingPage() {
               href="/sign-up?redirect_url=/install"
               className="cta-white inline-block px-14 py-5 text-xl relative z-10 mb-5"
             >
-              Add to Chrome
+              {extText}
             </Link>
           </SignedOut>
           <SignedIn>
@@ -649,7 +652,7 @@ export default function LandingPage() {
             href="/sign-up?redirect_url=/install"
             className="cta-white block w-full py-4 text-center text-base"
           >
-            Add to Chrome
+            {extText}
           </Link>
         </SignedOut>
         <SignedIn>

@@ -26,6 +26,7 @@ const fieldRegistry = new Map<string, HTMLElement>()
 const wrapperRegistry = new Map<string, HTMLElement>()
 
 let isExtensionEnabled = true
+let isGenerating = false
 
 chrome.storage.sync.get('settings', (data) => {
   if (data.settings) {
@@ -362,14 +363,23 @@ function attachFillButton(field: HTMLElement) {
   button.setAttribute('aria-label', 'Fill this field with AI using your resume')
 
   button.addEventListener('click', () => {
+    if (isGenerating) return
+    
     const question = extractQuestion(field)
     if (!question) return
 
     const isRegeneration = field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement ? !!field.value?.trim() : !!field.textContent?.trim()
 
+    isGenerating = true
     button.disabled = true
     button.classList.add('loading')
     button.innerHTML = `<span></span> Generating...`
+    
+    // Disable all other buttons to prevent concurrent API requests
+    wrapperRegistry.forEach((w) => {
+      const btn = (w as any)._jobHuntEasyButton as HTMLButtonElement
+      if (btn && btn !== button) btn.disabled = true
+    })
 
     const jobContext = extractJobContext()
 
@@ -385,6 +395,7 @@ function attachFillButton(field: HTMLElement) {
       },
     }).catch(() => {
       // Extension was reloaded — this button is a zombie
+      isGenerating = false
       button.disabled = false
       button.classList.remove('loading')
       button.innerHTML = isRegeneration ? `<span>↻</span> Regenerate` : `<span>✦</span> Fill with AI`
@@ -523,16 +534,42 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
     resetButton(fieldId, false)
     if (code === 'DAILY_LIMIT_REACHED') {
       showLimitReachedModal()
+      turnAllButtonsIntoUpgrade()
     } else if (code === 'UPGRADE_REQUIRED') {
       showProUpsellModal()
+    } else if (code === 'NO_INFO_AVAILABLE') {
+      showSleekToast('⚡ No relevant information found in your resume for this field.', 'info')
+    } else if (code === 'RESUME_NOT_FOUND') {
+      showSleekToast('📄 No resume found — open the Job Hunt Easy popup and upload your resume first.', 'info')
     } else if (code === 'API_RATE_LIMITED' || errMsg.includes('rate limit') || errMsg.includes('429')) {
-      showSleekToast('Model experiencing high load. Try waiting a moment, switch to a different model, or upgrade to Pro for priority access.', 'info')
+      showSleekToast('⚡ Model is experiencing high load. Try switching to a different model in the popup, or upgrade to Pro for priority access.', 'info')
     } else {
       // Log all other errors to console only — never show ugly red errors to users
       console.warn('[Job Hunt Easy] Suppressed error toast:', code, errMsg)
     }
   }
 })
+
+function turnAllButtonsIntoUpgrade() {
+  wrapperRegistry.forEach((wrapper) => {
+    const btn = (wrapper as any)._jobHuntEasyButton as HTMLButtonElement
+    if (!btn) return
+    
+    btn.disabled = false
+    btn.classList.remove('loading')
+    btn.innerHTML = `<span style="font-size:12px;">👑</span> Upgrade Plan`
+    btn.style.background = '#4f46e5'
+    
+    // Replace click listener to redirect
+    const newBtn = btn.cloneNode(true) as HTMLButtonElement
+    newBtn.addEventListener('click', (e) => {
+      e.preventDefault()
+      window.open('https://job-hunt-easy-dashboard.vercel.app/pricing', '_blank')
+    })
+    btn.parentNode?.replaceChild(newBtn, btn)
+    ;(wrapper as any)._jobHuntEasyButton = newBtn
+  })
+}
 
 function resetButton(fieldId: string, success: boolean = false) {
   const wrapper = wrapperRegistry.get(fieldId) as any
@@ -549,13 +586,25 @@ function resetButton(fieldId: string, success: boolean = false) {
     btn.classList.remove('loading')
     // Hold success state for 2 seconds, then reset
     setTimeout(() => {
+      isGenerating = false
       btn.disabled = false
       btn.innerHTML = defaultLabel
+      // Re-enable other buttons
+      wrapperRegistry.forEach((w) => {
+        const otherBtn = (w as any)._jobHuntEasyButton as HTMLButtonElement
+        if (otherBtn) otherBtn.disabled = false
+      })
     }, 2000)
   } else {
+    isGenerating = false
     btn.disabled = false
     btn.classList.remove('loading')
     btn.innerHTML = defaultLabel
+    // Re-enable other buttons
+    wrapperRegistry.forEach((w) => {
+      const otherBtn = (w as any)._jobHuntEasyButton as HTMLButtonElement
+      if (otherBtn) otherBtn.disabled = false
+    })
   }
 }
 

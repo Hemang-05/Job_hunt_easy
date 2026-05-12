@@ -32,3 +32,6 @@ npm-debug.log*
 
 # TypeScript
 *.tsbuildinfo
+
+# Extension zip builds — never commit these
+*.zip

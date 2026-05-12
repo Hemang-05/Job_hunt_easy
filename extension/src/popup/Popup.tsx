@@ -120,9 +120,11 @@ function Popup() {
 
       {/* Header */}
       <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 relative z-10">
-        <div className="w-6 h-6 rounded bg-white/10 flex items-center justify-center text-white text-[10px] font-black border border-white/20">
-          J
-        </div>
+        <img
+          src="/icons/logo.png"
+          alt="Job Hunt Easy"
+          className="w-6 h-6 rounded object-cover"
+        />
         <span className="font-bold text-white">Job Hunt Easy</span>
         <span className={`text-[9px] uppercase tracking-wider font-black px-2 py-0.5 rounded-full border ${
           accountPlan === 'pro'

@@ -4,10 +4,13 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useUser } from '@clerk/nextjs'
 import { CheckCircle, Zap } from 'lucide-react'
+import { useBrowser } from '@/hooks/useBrowser'
 
 export default function InstallExtensionPage() {
   const { user } = useUser()
   const [isInstalled, setIsInstalled] = useState(false)
+  const browserName = useBrowser()
+  const extText = browserName ? (browserName === 'Safari' || browserName === 'Firefox' ? 'Get Extension' : `Add to ${browserName}`) : 'Add to Chrome'
 
   const CHROME_STORE_URL = "https://chromewebstore.google.com/detail/iapgnkfpabeiocdjibgcifidmmjgjpja?utm_source=item-share-cb"
 
@@ -95,7 +98,7 @@ export default function InstallExtensionPage() {
               rel="noopener noreferrer"
               className="cta-white inline-flex items-center justify-center gap-3 w-full px-8 py-5 text-lg font-black"
             >
-              Add to Chrome
+              {extText}
             </a>
 
             <div className="mt-10 pt-8 border-t border-white/5 flex flex-col items-center justify-center gap-4 text-sm font-bold">

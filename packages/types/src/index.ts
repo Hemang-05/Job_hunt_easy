@@ -131,6 +131,7 @@ export type ErrorCode =
   | 'PARSE_ERROR'
   | 'UPGRADE_REQUIRED'
   | 'DAILY_LIMIT_REACHED'
+  | 'NO_INFO_AVAILABLE'
 
 // ─── Chrome Storage Schema ─────────────────────────────────
 // chrome.storage.local holds this shape
@@ -194,28 +195,34 @@ export interface OpenRouterConfig {
 // Models we support — only models with active API keys are enabled
 export const SUPPORTED_MODELS = [
   {
-    id: 'qwen/qwen3-next-80b-a3b-instruct:free',
-    label: '🟢 Standard',
+    id: 'meta-llama/llama-3.3-70b-instruct:free',
+    label: '🟢 Standard [Llama 3.3 70B]',
+    provider: 'openrouter' as AIProvider,
+    free: true,
+  },
+  {
+    id: 'openai/gpt-oss-120b:free',
+    label: '✨ Balanced [GPT-OSS 120B]',
     provider: 'openrouter' as AIProvider,
     free: true,
   },
 
   {
     id: 'gemini-3.1-flash-lite-preview',
-    label: '⚡ Fast 🔒',
+    label: '⚡ Fast [Gemini Flash] 🔒',
     provider: 'google' as AIProvider,
     free: false,
   },
   {
     id: 'gpt-5.4-nano-2026-03-17',
-    label: '🧠 Smart 🔒',
+    label: '🧠 Smart [GPT-5.4 Nano] 🔒',
     provider: 'openai' as AIProvider,
     free: false,
   },
 ] as const
 
 export const DEFAULT_SETTINGS: Settings = {
-  model: 'qwen/qwen3-next-80b-a3b-instruct:free',
+  model: 'meta-llama/llama-3.3-70b-instruct:free',
   enabled: true,
   tone: 'professional',
   maxAnswerLength: 300,
