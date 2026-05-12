@@ -326,7 +326,7 @@ function attachFillButton(field: HTMLElement) {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 3px 8px;
+      padding: 4px 10px;
       background: #6366f1;
       color: white;
       border: none;
@@ -784,7 +784,7 @@ function showLimitReachedModal() {
   container.id = 'job-hunt-easy-limit-modal'
   container.style.cssText = `
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
     display: flex; align-items: center; justify-content: center;
     z-index: 2147483647; font-family: system-ui, -apple-system, sans-serif;
   `
@@ -794,62 +794,92 @@ function showLimitReachedModal() {
   const modalHtml = `
     <style>
       .modal {
-        background: #fff; width: 440px; border-radius: 16px;
-        padding: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        position: relative; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        background: #0c0a1d; width: 420px; border-radius: 20px;
+        padding: 36px 32px; position: relative;
+        animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        box-shadow: 0 0 80px rgba(99, 102, 241, 0.15), 0 20px 40px rgba(0,0,0,0.4);
       }
-      @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes slideUp { from { opacity: 0; transform: translateY(24px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
       .close {
-        position: absolute; top: 16px; right: 16px; background: none; border: none;
-        font-size: 20px; cursor: pointer; color: #9ca3af;
+        position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+        width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+        font-size: 16px; cursor: pointer; color: rgba(255,255,255,0.4); transition: all 0.15s;
       }
-      .close:hover { color: #374151; }
-      .emoji { font-size: 40px; text-align: center; margin-bottom: 16px; }
-      h2 { margin: 0 0 12px; font-size: 22px; color: #111827; text-align: center; line-height: 1.3; }
-      .math-box {
-        background: #f3f4f6; border-radius: 12px; padding: 16px;
-        margin: 24px 0; font-size: 14px; color: #4b5563; line-height: 1.6;
+      .close:hover { color: white; background: rgba(255,255,255,0.1); }
+      .badge {
+        display: inline-flex; align-items: center; gap: 6px; background: rgba(99, 102, 241, 0.15);
+        border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 20px;
+        padding: 5px 14px; font-size: 11px; font-weight: 700; color: #a5b4fc;
+        text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px;
       }
-      .math-box strong { color: #111827; }
+      .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #6366f1; box-shadow: 0 0 8px rgba(99,102,241,0.8); }
+      h2 {
+        margin: 0 0 8px; font-size: 24px; color: #fff; font-weight: 800;
+        letter-spacing: -0.3px; line-height: 1.3;
+      }
+      .sub { color: rgba(255,255,255,0.45); font-size: 14px; font-weight: 500; margin-bottom: 24px; line-height: 1.5; }
+      .info-card {
+        background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 14px; padding: 18px 20px; margin-bottom: 20px;
+      }
+      .info-row {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 8px 0; font-size: 13px; font-weight: 500;
+      }
+      .info-row:not(:last-child) { border-bottom: 1px solid rgba(255,255,255,0.05); }
+      .info-label { color: rgba(255,255,255,0.5); }
+      .info-value { color: #fff; font-weight: 700; }
+      .info-value.pro { color: #a5b4fc; }
       .stats {
         display: flex; align-items: center; gap: 8px; margin-bottom: 24px;
-        color: #059669; font-weight: 500; font-size: 14px; justify-content: center;
+        color: #6366f1; font-weight: 600; font-size: 13px; justify-content: center;
       }
       .upgrade-btn {
-        display: block; width: 100%; padding: 14px; background: #2563eb;
-        color: white; border: none; border-radius: 8px; font-size: 16px;
-        font-weight: 600; cursor: pointer; text-align: center; text-decoration: none;
-        transition: background 0.2s;
+        display: block; width: 100%; padding: 14px; background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white; border: none; border-radius: 12px; font-size: 15px;
+        font-weight: 700; cursor: pointer; text-align: center; text-decoration: none;
+        transition: all 0.2s; letter-spacing: -0.2px;
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
       }
-      .upgrade-btn:hover { background: #1d4ed8; }
+      .upgrade-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(99, 102, 241, 0.5); }
       .later-btn {
         display: block; width: 100%; padding: 12px; background: none;
-        border: none; color: #6b7280; font-size: 14px; margin-top: 8px;
-        cursor: pointer; text-align: center;
+        border: none; color: rgba(255,255,255,0.3); font-size: 12px; margin-top: 10px;
+        cursor: pointer; text-align: center; font-weight: 500; transition: color 0.15s;
       }
-      .later-btn:hover { color: #374151; text-decoration: underline; }
+      .later-btn:hover { color: rgba(255,255,255,0.6); }
     </style>
     <div class="modal">
       <button class="close">×</button>
-      <div class="emoji">🎉</div>
-      <h2>5 applications done —<br/>you're on fire!</h2>
-      
-      <div class="math-box">
-        <strong>More applications = More interviews.</strong><br/>
-        Less applications = Less interviews.<br/><br/>
-        In the same time you'd fill 1 form manually, Pro users complete <strong>6+ applications</strong>.<br/>
-        Upgrade now and maximize every minute of your job search.
+      <div class="badge"><span class="badge-dot"></span> Daily Limit Reached</div>
+      <h2>You're on fire! 🔥</h2>
+      <p class="sub">You've completed 5 applications today. Upgrade to Pro to keep your momentum going.</p>
+
+      <div class="info-card">
+        <div class="info-row">
+          <span class="info-label">Free Plan</span>
+          <span class="info-value">5 apps/day</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Pro Plan</span>
+          <span class="info-value pro">✦ Unlimited</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">AI Models</span>
+          <span class="info-value pro">✦ GPT-5.4 + Gemini</span>
+        </div>
       </div>
-      
+
       <div class="stats">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-        30+ applications/day with Pro vs 5 on Free
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+        Pro users complete 30+ applications per day
       </div>
-      
+
       <a href="https://job-hunt-easy-dashboard.vercel.app/pricing" target="_blank" class="upgrade-btn">
-        Upgrade to Pro — Unlimited Applications →
+        Upgrade to Pro →
       </a>
-      <button class="later-btn">Fill Manually (4x fewer applications per hour)</button>
+      <button class="later-btn">Continue manually</button>
     </div>
   `
 

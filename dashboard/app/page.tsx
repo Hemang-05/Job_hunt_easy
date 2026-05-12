@@ -14,7 +14,7 @@ const montserrat = Montserrat({ subsets: ['latin'], weight: ['500', '600', '700'
 export default function LandingPage() {
   const [isScrolled, setIsScrolled] = useState(false)
   const browserName = useBrowser()
-  const extText = browserName ? (browserName === 'Safari' || browserName === 'Firefox' ? 'Get Extension' : `Add to ${browserName}`) : 'Add to Chrome'
+  const extText = browserName ? (browserName === 'Safari' || browserName === 'Firefox' ? 'Get Extension' : `Add to ${browserName}`) : 'Get Extension'
 
   useEffect(() => {
     const observer = new IntersectionObserver(

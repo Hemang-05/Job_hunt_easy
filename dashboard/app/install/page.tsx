@@ -10,7 +10,7 @@ export default function InstallExtensionPage() {
   const { user } = useUser()
   const [isInstalled, setIsInstalled] = useState(false)
   const browserName = useBrowser()
-  const extText = browserName ? (browserName === 'Safari' || browserName === 'Firefox' ? 'Get Extension' : `Add to ${browserName}`) : 'Add to Chrome'
+  const extText = browserName ? (browserName === 'Safari' || browserName === 'Firefox' ? 'Get Extension' : `Add to ${browserName}`) : 'Get Extension'
 
   const CHROME_STORE_URL = "https://chromewebstore.google.com/detail/iapgnkfpabeiocdjibgcifidmmjgjpja?utm_source=item-share-cb"
 
