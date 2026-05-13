@@ -546,8 +546,8 @@ export default function LandingPage() {
             <div className="flex flex-col md:flex-row justify-between items-center gap-10 mb-10">
               <div className="text-center md:text-left flex-shrink-0">
                 <p className="text-white/50 text-sm font-bold uppercase tracking-widest mb-2">Pro Plan</p>
-                <div className="text-6xl font-black text-white">{isIndia ? '₹49' : '$9'}<span className="text-2xl text-white/40">/mo</span></div>
-                <p className="text-sm text-white/40 italic mt-2 max-w-[180px]">Cancel anytime. Most users land before month 2.</p>
+                <div className="text-6xl font-black text-white">{isIndia ? '₹299' : '$9.99'}<span className="text-2xl text-white/40">{isIndia ? '' : '/mo'}</span></div>
+                <p className="text-sm text-white/40 italic mt-2 max-w-[180px]">{isIndia ? 'One-time payment. Lifetime access.' : 'Cancel anytime. Most users land before month 2.'}</p>
               </div>
               <div className="space-y-3 flex-grow">
                 {[
@@ -566,12 +566,12 @@ export default function LandingPage() {
             <div className="text-center">
               <SignedOut>
                 <Link href="/sign-up?redirect_url=/pricing" className="cta-white inline-block w-full max-w-md px-8 py-5 text-lg">
-                  Get Unlimited — {isIndia ? '₹49' : '$9'}/mo
+                  {isIndia ? 'Get Lifetime Access — ₹299' : 'Get Unlimited — $9.99/mo'}
                 </Link>
               </SignedOut>
               <SignedIn>
                 <Link href="/pricing" className="cta-white inline-block w-full max-w-md px-8 py-5 text-lg">
-                  Get Unlimited — {isIndia ? '₹49' : '$9'}/mo
+                  {isIndia ? 'Get Lifetime Access — ₹299' : 'Get Unlimited — $9.99/mo'}
                 </Link>
               </SignedIn>
               <p className="text-white/35 text-xs font-semibold mt-4 italic">Join thousands already using Pro to land faster</p>
