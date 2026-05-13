@@ -205,12 +205,11 @@ export default function PricingClient({ initialUser, initialPlan }: PricingClien
 
           <button
             onClick={handleUpgrade}
-            disabled={true}
-            style={{ opacity: 0.7 }}
-            className="w-full rounded-xl py-3 text-sm font-600 bg-indigo-500 text-white flex items-center justify-center gap-2 cursor-not-allowed"
+            disabled={loading}
+            className="w-full rounded-xl py-3 text-sm font-600 bg-indigo-500 text-white flex items-center justify-center gap-2 hover:bg-indigo-600 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
           >
             <Zap className="w-4 h-4" />
-            Payments launching soon
+            {loading ? 'Starting checkout...' : isPro ? 'Manage Subscription' : 'Upgrade to Pro'}
           </button>
 
           <p className="text-center text-gray-600 text-xs mt-3">
