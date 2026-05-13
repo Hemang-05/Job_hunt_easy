@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     const requestBody = isIndia
       ? {
           payment_link: true,
-          product_cart: [{ product_id: productId, quantity: 1 }],
+          product_cart: [{ product_id: productId, quantity: 1, amount: 29900 }],
           customer: {
             email: email,
             name: user?.fullName || undefined,
