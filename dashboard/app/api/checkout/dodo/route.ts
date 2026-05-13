@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     
     // Use the INR product ID for Indian users, otherwise fallback to the standard USD product
     const productId = isIndia 
-      ? 'pdt_0Nej6KuJmIuWVHrgq0kTn' 
+      ? process.env.NEXT_PUBLIC_DODO_PRODUCT_ID_IND 
       : process.env.NEXT_PUBLIC_DODO_PRODUCT_ID
 
     // Dynamically determine the app URL based on the request origin
