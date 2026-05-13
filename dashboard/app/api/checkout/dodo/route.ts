@@ -59,6 +59,7 @@ export async function POST(req: NextRequest) {
       product_id: productId,
       quantity: 1,
       payment_link: true,
+      billing_currency: isIndia ? 'INR' : 'USD', // Force Dodo to use the correct currency bounds
       customer: {
         email: email,
         name: user?.fullName || undefined,
