@@ -28,13 +28,18 @@ export default function LandingPage() {
     )
     document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el))
 
-    // Detect India via timezone for PPP pricing
-    try {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-      if (tz === 'Asia/Calcutta' || tz === 'Asia/Kolkata') {
-        setIsIndia(true)
-      }
-    } catch (e) {}
+    // Detect India via IP to respect VPNs, fallback to timezone
+    fetch('/api/geo')
+      .then(res => res.json())
+      .then(data => {
+        if (data.country === 'IN') setIsIndia(true)
+      })
+      .catch(() => {
+        try {
+          const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+          if (tz === 'Asia/Calcutta' || tz === 'Asia/Kolkata') setIsIndia(true)
+        } catch (e) {}
+      })
 
     return () => observer.disconnect()
   }, [])
