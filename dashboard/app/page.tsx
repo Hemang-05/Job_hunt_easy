@@ -15,6 +15,7 @@ export default function LandingPage() {
   const [isScrolled, setIsScrolled] = useState(false)
   const browserName = useBrowser()
   const extText = browserName ? (browserName === 'Safari' || browserName === 'Firefox' ? 'Get Extension' : `Add to ${browserName}`) : 'Get Extension'
+  const [isIndia, setIsIndia] = useState(false)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -26,6 +27,15 @@ export default function LandingPage() {
       { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
     )
     document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el))
+
+    // Detect India via timezone for PPP pricing
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+      if (tz === 'Asia/Calcutta' || tz === 'Asia/Kolkata') {
+        setIsIndia(true)
+      }
+    } catch (e) {}
+
     return () => observer.disconnect()
   }, [])
 
@@ -531,7 +541,7 @@ export default function LandingPage() {
             <div className="flex flex-col md:flex-row justify-between items-center gap-10 mb-10">
               <div className="text-center md:text-left flex-shrink-0">
                 <p className="text-white/50 text-sm font-bold uppercase tracking-widest mb-2">Pro Plan</p>
-                <div className="text-6xl font-black text-white">$9<span className="text-2xl text-white/40">/mo</span></div>
+                <div className="text-6xl font-black text-white">{isIndia ? '₹49' : '$9'}<span className="text-2xl text-white/40">/mo</span></div>
                 <p className="text-sm text-white/40 italic mt-2 max-w-[180px]">Cancel anytime. Most users land before month 2.</p>
               </div>
               <div className="space-y-3 flex-grow">
@@ -551,12 +561,12 @@ export default function LandingPage() {
             <div className="text-center">
               <SignedOut>
                 <Link href="/sign-up?redirect_url=/pricing" className="cta-white inline-block w-full max-w-md px-8 py-5 text-lg">
-                  Get Unlimited — $9/mo
+                  Get Unlimited — {isIndia ? '₹49' : '$9'}/mo
                 </Link>
               </SignedOut>
               <SignedIn>
                 <Link href="/pricing" className="cta-white inline-block w-full max-w-md px-8 py-5 text-lg">
-                  Get Unlimited — $9/mo
+                  Get Unlimited — {isIndia ? '₹49' : '$9'}/mo
                 </Link>
               </SignedIn>
               <p className="text-white/35 text-xs font-semibold mt-4 italic">Join thousands already using Pro to land faster</p>
