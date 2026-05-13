@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
         name: user?.fullName || undefined,
       },
       billing: {
-        country: 'US', // Required field — Dodo lets user change this at checkout
+        country: isIndia ? 'IN' : 'US', // Required field — Dodo lets user change this at checkout
       },
       metadata: {
         userId: userId, // ← This is how webhook identifies which user to upgrade
