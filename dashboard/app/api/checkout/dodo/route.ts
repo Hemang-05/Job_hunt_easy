@@ -24,7 +24,13 @@ export async function POST(req: NextRequest) {
     }
 
     const apiKey = process.env.DODO_PAYMENTS_API_KEY
-    const productId = process.env.NEXT_PUBLIC_DODO_PRODUCT_ID
+    const country = req.headers.get('x-vercel-ip-country') || 'US'
+    const isIndia = country === 'IN'
+    
+    // Use the INR product ID for Indian users, otherwise fallback to the standard USD product
+    const productId = isIndia 
+      ? 'pdt_0Nej6KuJmIuWVHrgq0kTn' 
+      : process.env.NEXT_PUBLIC_DODO_PRODUCT_ID
 
     // Dynamically determine the app URL based on the request origin
     // This ensures that if the user is using a Cloudflare tunnel (HTTPS), 

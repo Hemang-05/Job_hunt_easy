@@ -45,9 +45,10 @@ interface PricingClientProps {
     email: string
   } | null
   initialPlan: 'free' | 'pro' | null
+  userCountry: string
 }
 
-export default function PricingClient({ initialUser, initialPlan }: PricingClientProps) {
+export default function PricingClient({ initialUser, initialPlan, userCountry }: PricingClientProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [plan, setPlan] = useState<'free' | 'pro' | null>(initialPlan)
@@ -97,6 +98,7 @@ export default function PricingClient({ initialUser, initialPlan }: PricingClien
   }
 
   const isPro = plan === 'pro'
+  const isIndia = userCountry === 'IN'
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center px-4 py-20">
@@ -184,7 +186,7 @@ export default function PricingClient({ initialUser, initialPlan }: PricingClien
               </span>
             </div>
             <div className="flex items-end gap-1">
-              <span className="text-4xl font-700">$9.99</span>
+              <span className="text-4xl font-700">{isIndia ? '₹49' : '$9.99'}</span>
               <span className="text-gray-400 mb-1">/month</span>
             </div>
             <p className="text-gray-400 text-sm mt-2">Cancel anytime</p>
