@@ -47,30 +47,47 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No email found for user' }, { status: 400 })
     }
 
-    const isLocal    = appUrl.includes('localhost') || appUrl.includes('127.0.0.1')
+    const isLocal     = appUrl.includes('localhost') || appUrl.includes('127.0.0.1')
     const dodoBaseUrl = isLocal
       ? 'https://test.dodopayments.com'
       : 'https://live.dodopayments.com'
 
-    // ── India: one-time payment ──────────────────────────────
-    // ── Global: subscription ────────────────────────────────
-    const endpoint   = isIndia ? '/payments' : '/subscriptions'
-    const requestBody = {
-      product_id: productId,
-      quantity: 1,
-      payment_link: true,
-      customer: {
-        email: email,
-        name: user?.fullName || undefined,
-      },
-      billing: {
-        country: isIndia ? 'IN' : 'US',
-      },
-      metadata: {
-        userId: userId,
-      },
-      return_url: `${appUrl}/dashboard/pro-welcome?success=true`,
-    }
+    const endpoint = isIndia ? '/payments' : '/subscriptions'
+
+    // /payments (India) uses product_cart array
+    // /subscriptions (Global) uses product_id at top level
+    const requestBody = isIndia
+      ? {
+          payment_link: true,
+          product_cart: [{ product_id: productId, quantity: 1 }],
+          customer: {
+            email: email,
+            name: user?.fullName || undefined,
+          },
+          billing: {
+            country: 'IN',
+          },
+          metadata: {
+            userId: userId,
+          },
+          return_url: `${appUrl}/dashboard/pro-welcome?success=true`,
+        }
+      : {
+          product_id: productId,
+          quantity: 1,
+          payment_link: true,
+          customer: {
+            email: email,
+            name: user?.fullName || undefined,
+          },
+          billing: {
+            country: 'US',
+          },
+          metadata: {
+            userId: userId,
+          },
+          return_url: `${appUrl}/dashboard/pro-welcome?success=true`,
+        }
 
     console.log(`[Checkout] ${isIndia ? '🇮🇳 India (lifetime)' : '🌍 Global (monthly)'} | ${dodoBaseUrl}${endpoint} | ${email}`)
 
@@ -108,7 +125,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
-
 
 // // ============================================================
 // // dashboard/app/api/checkout/dodo/route.ts
