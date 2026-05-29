@@ -133,17 +133,21 @@ export async function POST(req: Request) {
     if (model === 'gemini-2.5-flash-preview-05-20') {
       console.log('[API Generate] Mapping retired model to stable: gemini-2.5-flash')
       model = 'gemini-2.5-flash'
-    } else if (model === 'qwen/qwen3-235b-a22b:free' || model === 'qwen/qwen3-next-80b-a3b-instruct:free') {
-      // Qwen models removed due to 401 auth errors — migrate to Llama 3.3 70B
-      console.log('[API Generate] Mapping retired Qwen model to: meta-llama/llama-3.3-70b-instruct:free')
-      model = 'meta-llama/llama-3.3-70b-instruct:free'
+    } else if (
+      model === 'qwen/qwen3-235b-a22b:free' ||
+      model === 'qwen/qwen3-next-80b-a3b-instruct:free' ||
+      model === 'meta-llama/llama-3.3-70b-instruct:free'
+    ) {
+      // Migrating retired / commented out models to GPT-OSS 120B
+      console.log('[API Generate] Mapping retired/commented-out model to: openai/gpt-oss-120b:free')
+      model = 'openai/gpt-oss-120b:free'
     }
 
     // Determine provider from the SUPPORTED_MODELS list
     const modelEntry = SUPPORTED_MODELS.find((m) => m.id === model)
     const provider = modelEntry?.provider ?? 'openrouter'
 
-    console.log(`[API Generate] Processing request: model="${model}" (original="${rawModel}"), provider="${provider}"`)
+    console.log(`[API Generate] Requested model="${model}" (original="${rawModel}"), provider="${provider}"`)
 
     // Block free users from using Pro models
     if (profile.plan === 'free' && modelEntry && !modelEntry.free) {
@@ -157,11 +161,7 @@ export async function POST(req: Request) {
     let finalModel = model
     let finalProvider = provider
 
-    // TEMPORARY OVERRIDE: Route GPT-5.4 Nano to Gemini 3 Flash until OpenAI credits are added
-    if (finalModel === 'gpt-5.4-nano-2026-03-17') {
-      finalModel = 'gemini-3.1-flash-lite-preview'
-      finalProvider = 'google'
-    }
+    console.log(`[API Generate] Processing request: model="${finalModel}" (original="${rawModel}"), provider="${finalProvider}"`)
 
     if (finalProvider === 'google') {
       return handleGoogleAI({ prompt, model: finalModel, max_tokens, cors, req })

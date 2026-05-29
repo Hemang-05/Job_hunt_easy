@@ -26,19 +26,19 @@ export default function ExtensionBanner() {
   return (
     <div className="glass-tile p-8 mb-10 flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden group">
       {/* Animated glow effect */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none group-hover:bg-indigo-600/20 transition-colors duration-700"></div>
+      <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none group-hover:bg-blue-600/10 transition-colors duration-700"></div>
       
       <div className="relative z-10 text-center sm:text-left">
-        <h3 className="font-black text-2xl text-white mb-2 flex items-center justify-center sm:justify-start gap-3">
-          <Zap className="w-6 h-6 text-indigo-400 fill-indigo-400" /> Install the Job Hunt Easy Extension
+        <h3 className="font-black text-2xl text-gray-900 mb-2 flex items-center justify-center sm:justify-start gap-3">
+          <Zap className="w-6 h-6 text-blue-600 fill-blue-600" /> Install the Job Hunt Easy Extension
         </h3>
-        <p className="text-white/50 text-sm font-medium max-w-md">
+        <p className="text-gray-500 text-sm font-medium max-w-md">
           You need the browser extension to autofill job applications across the web. Get it now to start applying 5× faster.
         </p>
       </div>
       <Link 
         href="/install" 
-        className="cta-white relative z-10 shrink-0 px-8 py-4 text-base font-bold"
+        className="cta-blue relative z-10 shrink-0 px-8 py-4 text-base font-bold"
       >
         Install Now
       </Link>

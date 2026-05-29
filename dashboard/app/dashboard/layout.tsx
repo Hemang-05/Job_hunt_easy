@@ -13,11 +13,11 @@ import { createClient } from '@/lib/supabase/server'
 import { LayoutDashboard, FileText, Briefcase, User, Settings, Sparkles } from 'lucide-react'
 
 const NAV_ITEMS = [
-  { href: '/dashboard',               label: 'Overview',       icon: <LayoutDashboard className="w-5 h-5" /> },
-  { href: '/dashboard/answers',       label: 'Saved Answers',  icon: <FileText className="w-5 h-5" /> },
-  { href: '/dashboard/applications',  label: 'Applications',   icon: <Briefcase className="w-5 h-5" /> },
-  { href: '/dashboard/resume',        label: 'Resume',         icon: <User className="w-5 h-5" /> },
-  { href: '/dashboard/settings',      label: 'Settings',       icon: <Settings className="w-5 h-5" /> },
+  { href: '/dashboard', label: 'Overview', icon: <LayoutDashboard className="w-5 h-5" /> },
+  { href: '/dashboard/answers', label: 'Saved Answers', icon: <FileText className="w-5 h-5" /> },
+  { href: '/dashboard/applications', label: 'Applications', icon: <Briefcase className="w-5 h-5" /> },
+  { href: '/dashboard/resume', label: 'Resume', icon: <User className="w-5 h-5" /> },
+  { href: '/dashboard/settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> },
 ]
 
 export default async function DashboardLayout({
@@ -43,61 +43,60 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#080616] p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+    <div className="min-h-screen bg-[#F5F5F7] p-4 sm:p-6 lg:p-8 flex items-center justify-center">
       {/* ─── MAIN DASHBOARD ISLAND ─── */}
-      <div className="w-full max-w-[1600px] h-[calc(100vh-4rem)] bg-[#0d1c30] rounded-[28px] border border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.6)] flex overflow-hidden relative">
-        
+      <div className="w-full max-w-[1600px] h-[calc(100vh-4rem)] bg-white rounded-[28px] border border-gray-200/80 shadow-[0_20px_50px_rgba(0,0,0,0.04)] flex overflow-hidden relative">
+
         {/* Subtle shine on the main island */}
-        <div 
-          className="absolute inset-0 pointer-events-none z-0" 
-          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 40%)' }}
+        <div
+          className="absolute inset-0 pointer-events-none z-0"
+          style={{ background: 'linear-gradient(135deg, rgba(37,99,235,0.03) 0%, transparent 40%)' }}
         />
 
         {/* Sidebar */}
-        <aside className="w-64 border-r border-white/5 flex flex-col relative z-10 bg-white/2 backdrop-blur-md">
+        <aside className="w-64 border-r border-gray-200/60 flex flex-col relative z-10 bg-[#F9FAFB]">
           {/* Logo */}
           <div className="flex items-center gap-3 px-6 py-8">
-            <div className="w-8 h-8 flex-shrink-0 shadow-lg shadow-indigo-500/20 rounded-lg overflow-hidden">
+            <div className="w-8 h-8 flex-shrink-0 shadow-md shadow-blue-500/10 rounded-lg overflow-hidden">
               <Image src="/logo.png" alt="Logo" width={32} height={32} className="w-full h-full object-cover" />
             </div>
             <div className="min-w-0">
-              <span className="font-bold text-white tracking-tight text-lg">Job Hunt Easy</span>
-              <div className={`mt-1 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-widest border ${
-                plan === 'pro'
-                  ? 'bg-indigo-500/20 text-indigo-200 border-indigo-400/25'
-                  : 'bg-white/5 text-white/45 border-white/10'
-              }`}>
-                <Sparkles className="w-3 h-3" />
+              <span className="font-bold text-gray-900 tracking-tight text-lg">Job Hunt Easy</span>
+              <div className={`mt-1 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider border ${plan === 'pro'
+                  ? 'bg-blue-50 text-blue-600 border-blue-200/60'
+                  : 'bg-gray-100 text-gray-500 border-gray-200'
+                }`}>
+                <Sparkles className="w-2.5 h-2.5" />
                 {plan === 'pro' ? 'Pro plan' : 'Free plan'}
               </div>
             </div>
           </div>
-  
+
           {/* Nav */}
-          <SidebarNav 
-            items={NAV_ITEMS} 
-            showDevChecklist={user.emailAddresses.some(e => e.emailAddress === 'hemangm08@gmail.com')} 
+          <SidebarNav
+            items={NAV_ITEMS}
+            showDevChecklist={user.emailAddresses.some(e => e.emailAddress === 'hemangm08@gmail.com')}
           />
-  
+
           {/* User */}
-          <div className="px-6 py-6 border-t border-white/5 flex items-center gap-3">
+          <div className="px-6 py-6 border-t border-gray-200/60 flex items-center gap-3 bg-white/50">
             <UserButton afterSignOutUrl="/" />
             <div className="flex-1 min-w-0">
-              <div className="text-xs font-semibold text-white truncate">
+              <div className="text-xs font-bold text-gray-900 truncate">
                 {user.firstName} {user.lastName}
               </div>
-              <div className="text-[10px] text-white/40 truncate font-medium">
+              <div className="text-[10px] text-gray-500 truncate font-medium">
                 {user.emailAddresses[0]?.emailAddress}
               </div>
-              <div className="text-[10px] text-white/30 truncate font-black uppercase tracking-wider mt-1">
+              <div className="text-[9px] text-gray-400 truncate font-extrabold uppercase tracking-wider mt-1">
                 {plan === 'pro' ? 'Pro access active' : 'Free access'}
               </div>
             </div>
           </div>
         </aside>
-  
+
         {/* Main Content Area */}
-        <main className="flex-1 p-8 overflow-auto relative z-10 custom-scrollbar">
+        <main className="flex-1 p-8 overflow-auto relative z-10 custom-scrollbar bg-white">
           {children}
         </main>
       </div>

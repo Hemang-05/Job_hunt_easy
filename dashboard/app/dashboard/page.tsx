@@ -85,17 +85,17 @@ async function DashboardContent() {
       <ExtensionBanner />
       
       <div>
-        <h1 className="text-3xl font-black text-white tracking-tight">
+        <h1 className="text-3xl font-black text-gray-900 tracking-tight">
           Welcome back, {user?.firstName}
         </h1>
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-2">
-          <p className="text-white/50 text-sm font-medium">
+          <p className="text-gray-500 text-sm font-medium">
             Here&apos;s how Job Hunt Easy is supercharging your applications.
           </p>
-          <span className={`w-fit rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
+          <span className={`w-fit rounded-full border px-3 py-0.5 text-[9px] font-extrabold uppercase tracking-wider ${
             plan === 'pro'
-              ? 'bg-indigo-500/20 text-indigo-200 border-indigo-400/25'
-              : 'bg-white/5 text-white/45 border-white/10'
+              ? 'bg-blue-50 text-blue-600 border-blue-200/60'
+              : 'bg-gray-100 text-gray-500 border-gray-200'
           }`}>
             {plan === 'pro' ? 'Pro plan' : 'Free plan'}
           </span>
@@ -105,18 +105,18 @@ async function DashboardContent() {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { label: 'Saved answers',  value: totalAnswers,  sub: 'Total in library', icon: <Sparkles className="w-5 h-5 text-indigo-400" /> },
-          { label: 'Total uses',     value: totalUses,           sub: 'Fields filled', icon: <Zap className="w-5 h-5 text-indigo-400" /> },
-          { label: 'Plan',           value: plan === 'pro' ? 'Pro' : 'Free', sub: plan === 'pro' ? 'Unlimited access' : '5 sessions per day', icon: <Star className="w-5 h-5 text-indigo-400" /> },
-          { label: 'Top question',   value: topAnswer?.used_count ?? 0, sub: topAnswer?.question_text ? topAnswer.question_text.slice(0, 20) + '…' : 'None yet', icon: <Star className="w-5 h-5 text-indigo-400" /> },
+          { label: 'Saved answers',  value: totalAnswers,  sub: 'Total in library', icon: <Sparkles className="w-5 h-5 text-blue-600" /> },
+          { label: 'Total uses',     value: totalUses,           sub: 'Fields filled', icon: <Zap className="w-5 h-5 text-blue-600" /> },
+          { label: 'Plan',           value: plan === 'pro' ? 'Pro' : 'Free', sub: plan === 'pro' ? 'Unlimited access' : '5 sessions per day', icon: <Star className="w-5 h-5 text-blue-600" /> },
+          { label: 'Top question',   value: topAnswer?.used_count ?? 0, sub: topAnswer?.question_text ? topAnswer.question_text.slice(0, 20) + '…' : 'None yet', icon: <Star className="w-5 h-5 text-blue-600" /> },
         ].map(({ label, value, sub, icon }) => (
           <div key={label} className="glass-tile p-6 relative group">
-            <div className="absolute top-6 right-6 opacity-20 group-hover:opacity-100 transition-opacity">
+            <div className="absolute top-6 right-6 opacity-30 group-hover:opacity-100 transition-opacity">
               {icon}
             </div>
-            <div className="text-4xl font-black text-white mb-1">{value}</div>
-            <div className="text-sm font-bold text-white/80">{label}</div>
-            <div className="text-xs text-white/40 mt-1 font-medium">{sub}</div>
+            <div className="text-4xl font-black text-gray-900 mb-1">{value}</div>
+            <div className="text-sm font-bold text-gray-700">{label}</div>
+            <div className="text-xs text-gray-400 mt-1 font-medium">{sub}</div>
           </div>
         ))}
       </div>
@@ -124,8 +124,8 @@ async function DashboardContent() {
       {/* Recent answers */}
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-white tracking-tight">Recent Answers</h2>
-          <Link href="/dashboard/answers" className="text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight">Recent Answers</h2>
+          <Link href="/dashboard/answers" className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors">
             View all library →
           </Link>
         </div>
@@ -139,18 +139,18 @@ async function DashboardContent() {
               >
                 <div className="flex items-start justify-between gap-6">
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-bold text-white mb-1 truncate">
+                    <div className="text-sm font-bold text-gray-900 mb-1 truncate">
                       {answer.question_text}
                     </div>
-                    <div className="text-xs text-white/50 line-clamp-1 font-medium leading-relaxed">
+                    <div className="text-xs text-gray-500 line-clamp-1 font-medium leading-relaxed">
                       {answer.answer}
                     </div>
                   </div>
                   <div className="flex-shrink-0 text-right">
-                    <div className="text-xs font-black text-indigo-400 uppercase tracking-wider">
+                    <div className="text-xs font-black text-blue-600 uppercase tracking-wider">
                       {answer.used_count} uses
                     </div>
-                    <div className="text-[10px] text-white/30 mt-1 font-bold uppercase tracking-tighter">
+                    <div className="text-[10px] text-gray-400 mt-1 font-bold uppercase tracking-tighter">
                       {answer.page_url
                         ? new URL(answer.page_url).hostname
                         : 'Unknown site'}
@@ -162,11 +162,11 @@ async function DashboardContent() {
           </div>
         ) : (
           <div className="glass-tile p-12 text-center">
-            <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Sparkles className="w-8 h-8 text-white/20" />
+            <div className="w-16 h-16 bg-gray-50 border border-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Sparkles className="w-8 h-8 text-gray-400" />
             </div>
-            <div className="text-lg font-bold text-white">No answers yet</div>
-            <p className="text-sm text-white/40 mt-2 max-w-xs mx-auto font-medium">
+            <div className="text-lg font-bold text-gray-900">No answers yet</div>
+            <p className="text-sm text-gray-500 mt-2 max-w-xs mx-auto font-medium">
               Open any job application and use the Job Hunt Easy button to start saving time.
             </p>
           </div>
