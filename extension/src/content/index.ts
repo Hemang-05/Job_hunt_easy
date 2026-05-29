@@ -501,31 +501,30 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
     const field = fieldRegistry.get(fieldId)
     if (!field) return
 
-    if (field instanceof HTMLTextAreaElement || field instanceof HTMLInputElement) {
-      // For React 16+ forms, we must use the native value setter prototype
-      const nativeSetter = Object.getOwnPropertyDescriptor(
-        window[field.tagName === 'INPUT' ? 'HTMLInputElement' : 'HTMLTextAreaElement'].prototype,
-        'value'
-      )?.set
-      
-      if (nativeSetter) {
-        nativeSetter.call(field, field.value + chunk)
-      } else {
-        field.value += chunk
-      }
-      
-      // Trigger React/Angular/Vue synthetic events
-      field.dispatchEvent(new Event('input', { bubbles: true }))
-      field.dispatchEvent(new Event('change', { bubbles: true }))
-    } else if (field.isContentEditable) {
-      field.textContent += chunk
-      field.dispatchEvent(new InputEvent('input', { bubbles: true }))
-      field.dispatchEvent(new Event('change', { bubbles: true }))
-    }
+    appendFieldValue(field, chunk)
   }
 
   if (message.type === 'STREAM_DONE') {
-    const { fieldId } = message.payload
+    const { fieldId, fullAnswer } = message.payload
+    const field = fieldRegistry.get(fieldId)
+
+    if (field && fullAnswer?.trim()) {
+      ensureFinalFieldValue(field, fullAnswer)
+    }
+
+    const filledValue = field ? getFieldValue(field).trim() : ''
+    const expectedValue = fullAnswer?.trim() ?? ''
+    if (!field || (expectedValue && !filledValue.includes(expectedValue))) {
+      console.warn('[Job Hunt Easy] Generated answer could not be inserted into the page field', {
+        fieldId,
+        expectedLength: expectedValue.length,
+        actualLength: filledValue.length,
+      })
+      resetButton(fieldId, false)
+      showSleekToast('Generated the answer, but this page blocked autofill. Click the field and try again.', 'error')
+      return
+    }
+
     resetButton(fieldId, true)
   }
 
@@ -545,10 +544,57 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
       showSleekToast('⚡ Model is experiencing high load. Try switching to a different model in the popup, or upgrade to Pro for priority access.', 'info')
     } else {
       // Log all other errors to console only — never show ugly red errors to users
-      console.warn('[Job Hunt Easy] Suppressed error toast:', code, errMsg)
+      console.warn('[Job Hunt Easy] Generation failed:', code, errMsg)
+      showSleekToast(errMsg || 'AI could not generate an answer. Try another model from the popup.', 'error')
     }
   }
 })
+
+function getFieldValue(field: HTMLElement): string {
+  if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+    return field.value
+  }
+  return field.textContent ?? ''
+}
+
+function setFieldValue(field: HTMLElement, value: string) {
+  field.focus()
+
+  if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+    const prototype = field instanceof HTMLInputElement
+      ? HTMLInputElement.prototype
+      : HTMLTextAreaElement.prototype
+    const nativeSetter = Object.getOwnPropertyDescriptor(prototype, 'value')?.set
+
+    if (nativeSetter) {
+      nativeSetter.call(field, value)
+    } else {
+      field.value = value
+    }
+
+    field.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: value }))
+    field.dispatchEvent(new Event('change', { bubbles: true }))
+    field.blur()
+    field.focus()
+    return
+  }
+
+  if (field.isContentEditable) {
+    field.textContent = value
+    field.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: value }))
+    field.dispatchEvent(new Event('change', { bubbles: true }))
+  }
+}
+
+function appendFieldValue(field: HTMLElement, chunk: string) {
+  setFieldValue(field, getFieldValue(field) + chunk)
+}
+
+function ensureFinalFieldValue(field: HTMLElement, fullAnswer: string) {
+  const currentValue = getFieldValue(field)
+  if (currentValue.trim().includes(fullAnswer.trim())) return
+  setFieldValue(field, fullAnswer)
+}
 
 function turnAllButtonsIntoUpgrade() {
   wrapperRegistry.forEach((wrapper) => {

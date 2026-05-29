@@ -12,7 +12,7 @@ export function ModelSelector({ plan = 'free' }: { plan?: 'free' | 'pro' }) {
 
   useEffect(() => {
     const currentModel = SUPPORTED_MODELS.find((m) => m.id === settings.model)
-    if (plan !== 'pro' && currentModel && !currentModel.free) {
+    if (!currentModel || (plan !== 'pro' && !currentModel.free)) {
       updateSettings({ model: DEFAULT_SETTINGS.model })
     }
   }, [plan, settings.model, updateSettings])
@@ -31,18 +31,18 @@ export function ModelSelector({ plan = 'free' }: { plan?: 'free' | 'pro' }) {
 
   return (
     <div className="space-y-1.5">
-      <label className="text-xs font-bold uppercase tracking-widest text-white/50">AI Model</label>
+      <label className="text-xs font-bold uppercase tracking-widest text-gray-500">AI Model</label>
       <select
         value={settings.model}
         onChange={(e) => handleModelChange(e.target.value)}
-        className="w-full text-xs border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#2F2FE4] bg-black/40 text-white shadow-inner"
+        className="w-full text-xs border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:border-blue-600 bg-white text-gray-900 shadow-sm"
       >
-        <optgroup label="Free Models" className="bg-[#080616]">
+        <optgroup label="Free Models" className="bg-white text-gray-900">
           {SUPPORTED_MODELS.filter(m => m.free).map((m) => (
             <option key={m.id} value={m.id}>{m.label}</option>
           ))}
         </optgroup>
-        <optgroup label="Premium Models (Pro)" className="bg-[#080616]">
+        <optgroup label="Premium Models (Pro)" className="bg-white text-gray-900">
           {SUPPORTED_MODELS.filter(m => !m.free).map((m) => (
             <option key={m.id} value={m.id}>
               {m.label.replace(' (Pro)', '')} {plan === 'pro' ? '✦' : '🔒'}
@@ -52,14 +52,14 @@ export function ModelSelector({ plan = 'free' }: { plan?: 'free' | 'pro' }) {
       </select>
 
       {showUpsell && (
-        <div className="mt-3 rounded-xl border border-indigo-400/25 bg-indigo-500/10 p-3">
-          <div className="text-xs font-black text-white mb-1">Unlock premium AI models</div>
-          <p className="text-[11px] text-white/55 leading-relaxed mb-3">
+        <div className="mt-3 rounded-xl border border-indigo-100 bg-indigo-50/50 p-3.5">
+          <div className="text-xs font-black text-indigo-950 mb-1">Unlock premium AI models</div>
+          <p className="text-[11px] text-indigo-700 leading-relaxed mb-3">
             Pro includes premium models, unlimited applications, and no 5-session daily cap.
           </p>
           <button
             onClick={() => chrome.tabs.create({ url: `${API_BASE_URL}/pricing` })}
-            className="w-full rounded-lg bg-[#6366f1] px-3 py-2 text-[11px] font-black text-white hover:bg-[#818cf8] transition-colors"
+            className="w-full rounded-lg bg-indigo-600 px-3 py-2 text-[11px] font-black text-white hover:bg-indigo-700 transition-colors shadow-sm"
           >
             View Pro pricing
           </button>
@@ -82,7 +82,7 @@ export function ToneSelector() {
 
   return (
     <div className="space-y-1.5 pt-2">
-      <label className="text-xs font-bold uppercase tracking-widest text-white/50">Answer Tone</label>
+      <label className="text-xs font-bold uppercase tracking-widest text-gray-500">Answer Tone</label>
       <div className="grid grid-cols-3 gap-2">
         {TONES.map((tone) => (
           <button
@@ -90,14 +90,14 @@ export function ToneSelector() {
             onClick={() => updateSettings({ tone: tone.value })}
             className={`p-2 rounded-lg border text-left transition-all ${
               settings.tone === tone.value
-                ? 'border-[#2F2FE4] bg-[#2F2FE4]/10 shadow-[0_0_10px_rgba(47,47,228,0.3)]'
-                : 'border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10'
+                ? 'border-blue-600 bg-blue-50/50 shadow-[0_0_10px_rgba(37,99,235,0.08)]'
+                : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'
             }`}
           >
-            <div className={`text-[11px] font-bold ${settings.tone === tone.value ? 'text-white' : 'text-white/70'}`}>
+            <div className={`text-[11px] font-bold ${settings.tone === tone.value ? 'text-blue-700' : 'text-gray-700'}`}>
               {tone.label}
             </div>
-            <div className="text-[9px] text-white/40 mt-0.5 leading-tight">{tone.desc}</div>
+            <div className={`text-[9px] mt-0.5 leading-tight ${settings.tone === tone.value ? 'text-blue-500/80' : 'text-gray-400'}`}>{tone.desc}</div>
           </button>
         ))}
       </div>
@@ -124,15 +124,15 @@ export function CacheStats() {
           { label: 'Total uses',    value: totalUses },
           { label: 'Stale',         value: staleCount },
         ].map(({ label, value }) => (
-          <div key={label} className="text-center p-2 bg-white/5 border border-white/5 rounded-xl">
-            <div className="text-lg font-black text-white">{value}</div>
-            <div className="text-[10px] text-white/50 uppercase tracking-wider">{label}</div>
+          <div key={label} className="text-center p-2.5 bg-white border border-gray-200/80 rounded-xl shadow-sm">
+            <div className="text-lg font-black text-gray-900">{value}</div>
+            <div className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">{label}</div>
           </div>
         ))}
       </div>
 
       {staleCount > 0 && (
-        <div className="text-[11px] text-amber-400 bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg font-medium leading-relaxed">
+        <div className="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 p-2.5 rounded-lg font-semibold leading-relaxed">
           {staleCount} answer{staleCount > 1 ? 's were' : ' was'} generated with an older resume version.
           They'll be flagged when used.
         </div>
@@ -145,12 +145,12 @@ export function CacheStats() {
               clearCache()
             }
           }}
-          className="w-full text-[11px] font-bold uppercase tracking-wider text-red-400 hover:text-red-300 border border-red-500/30 rounded-lg py-2 hover:bg-red-500/10 transition-colors"
+          className="w-full text-[11px] font-bold uppercase tracking-wider text-red-600 hover:text-red-700 border border-red-200 rounded-lg py-2.5 bg-white hover:bg-red-50 transition-colors shadow-sm"
         >
           Clear all cached answers
         </button>
       ) : (
-        <p className="text-xs text-white/30 text-center py-4 italic font-medium">
+        <p className="text-xs text-gray-400 text-center py-4 italic font-bold">
           No answers cached yet. Fill a form field to get started.
         </p>
       )}

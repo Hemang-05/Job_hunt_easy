@@ -52,25 +52,25 @@ function UsageBar({ onUsage }: { onUsage: (usage: any | null) => void }) {
   }, [])
 
   if (loading) {
-    return <div className="px-4 py-2 text-xs text-white/50 animate-pulse border-b border-white/5 relative z-10 bg-black/20">Loading limits...</div>
+    return <div className="px-4 py-2 text-xs text-gray-400 animate-pulse border-b border-gray-200/60 relative z-10 bg-white/50">Loading limits...</div>
   }
 
   if (!usage || usage.error) {
     return (
-      <div className="px-4 py-2 text-[11px] text-amber-500/80 bg-amber-500/10 border-b border-white/5 relative z-10">
-        Sign in at <a href={API_BASE_URL} target="_blank" className="underline">Dashboard</a> to track usage
+      <div className="px-4 py-2 text-[11px] text-amber-800 bg-amber-50 border-b border-gray-200/60 relative z-10">
+        Sign in at <a href={API_BASE_URL} target="_blank" className="underline font-bold text-amber-900">Dashboard</a> to track usage
       </div>
     )
   }
 
   if (usage.plan === 'pro') {
     return (
-      <div className="px-4 py-2 flex items-center justify-between text-xs border-b border-white/5 bg-gradient-to-r from-[#2F2FE4]/20 to-purple-500/20 relative z-10">
+      <div className="px-4 py-2.5 flex items-center justify-between text-xs border-b border-gray-200/60 bg-gradient-to-r from-blue-50 to-indigo-50 relative z-10">
         <div className="flex flex-col">
-          <span className="text-white font-medium flex items-center gap-1"><span className="text-emerald-400">✦</span> Pro Plan</span>
-          {usage.email && <span className="text-[10px] text-white/40">{usage.email}</span>}
+          <span className="text-gray-900 font-bold flex items-center gap-1"><span className="text-blue-600">✦</span> Pro Plan</span>
+          {usage.email && <span className="text-[10px] text-gray-500">{usage.email}</span>}
         </div>
-        <span className="text-white/60">Unlimited</span>
+        <span className="text-blue-600 font-bold bg-blue-100/50 px-2 py-0.5 rounded-full border border-blue-200 text-[10px] uppercase">Unlimited</span>
       </div>
     )
   }
@@ -78,18 +78,18 @@ function UsageBar({ onUsage }: { onUsage: (usage: any | null) => void }) {
   const percent = Math.min(100, Math.max(0, (usage.sessions_used / usage.sessions_limit) * 100))
 
   return (
-    <div className="px-4 py-2.5 border-b border-white/5 bg-white/5 relative z-10">
-      <div className="flex justify-between text-xs mb-1.5">
+    <div className="px-4 py-3 border-b border-gray-200/60 bg-white relative z-10">
+      <div className="flex justify-between items-start text-xs mb-2">
         <div className="flex flex-col">
-          <span className="text-white/90 font-medium">{usage.sessions_used} / {usage.sessions_limit} applications today</span>
-          {usage.email && <span className="text-[10px] text-white/40">{usage.email}</span>}
+          <span className="text-gray-900 font-bold">{usage.sessions_used} / {usage.sessions_limit} applications today</span>
+          {usage.email && <span className="text-[10px] text-gray-400 mt-0.5">{usage.email}</span>}
         </div>
-        <a href={`${API_BASE_URL}/pricing`} target="_blank" className="text-[#6366f1] hover:text-white transition-colors font-bold">Upgrade →</a>
+        <a href={`${API_BASE_URL}/pricing`} target="_blank" className="text-blue-600 hover:text-blue-700 transition-colors font-bold text-[11px] uppercase tracking-wider">Upgrade →</a>
       </div>
-      <div className="h-1.5 w-full bg-black/50 rounded-full overflow-hidden border border-white/10">
-        <div className="h-full bg-gradient-to-r from-[#6366f1] to-[#a855f7] transition-all" style={{ width: `${percent}%` }} />
+      <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden border border-gray-200">
+        <div className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 transition-all" style={{ width: `${percent}%` }} />
       </div>
-      <div className="text-[10px] text-white/40 mt-1.5 text-right uppercase tracking-wider font-bold">
+      <div className="text-[9px] text-gray-400 mt-2 text-right uppercase tracking-wider font-bold">
         Resets in {usage.reset_in}
       </div>
     </div>
@@ -114,40 +114,40 @@ function Popup() {
   }
 
   return (
-    <div className="w-[400px] bg-[#080616] font-sans text-[#E0E4F5] border border-white/10 shadow-2xl relative overflow-hidden">
-      {/* Background glow to match the premium feel */}
-      <div className="absolute top-0 left-0 right-0 h-32 bg-[radial-gradient(ellipse_at_top,rgba(47,47,228,0.2)_0%,transparent_70%)] pointer-events-none" />
+    <div className="w-[400px] bg-[#F5F5F7] font-sans text-gray-900 border border-gray-200/80 shadow-2xl relative overflow-hidden">
+      {/* Background glow matching landing page premium styling */}
+      <div className="absolute top-0 left-0 right-0 h-32 bg-[radial-gradient(ellipse_at_top,rgba(37,99,235,0.06)_0%,transparent_70%)] pointer-events-none" />
 
       {/* Header */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 relative z-10">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-200/60 bg-white relative z-10">
         <img
           src="/icons/logo.png"
           alt="Job Hunt Easy"
-          className="w-6 h-6 rounded object-cover"
+          className="w-6 h-6 rounded-full object-cover"
         />
-        <span className="font-bold text-white">Job Hunt Easy</span>
-        <span className={`text-[9px] uppercase tracking-wider font-black px-2 py-0.5 rounded-full border ${
+        <span className="font-bold text-gray-900 tracking-tight">Job Hunt Easy</span>
+        <span className={`text-[9px] uppercase tracking-wider font-extrabold px-2 py-0.5 rounded-full border ${
           accountPlan === 'pro'
-            ? 'bg-[#2F2FE4]/25 text-indigo-200 border-indigo-400/30'
-            : 'bg-white/5 text-white/45 border-white/10'
+            ? 'bg-blue-50 text-blue-600 border-blue-200'
+            : 'bg-gray-100 text-gray-500 border-gray-200'
         }`}>
           {accountPlan === 'pro' ? 'Pro' : 'Free'}
         </span>
-        <span className="ml-auto text-[10px] uppercase tracking-wider font-bold text-white/40">AI Filler</span>
+        <span className="ml-auto text-[10px] uppercase tracking-wider font-bold text-gray-400">AI Filler</span>
       </div>
 
       <UsageBar onUsage={(usage) => setAccountPlan(usage?.plan === 'pro' ? 'pro' : 'free')} />
 
       {/* Status bar */}
-      <div className={`px-4 py-2 text-xs font-semibold flex items-center gap-2 border-b border-white/5 ${
-        settings.enabled ? 'bg-emerald-500/10 text-emerald-400' : 'bg-white/5 text-white/50'
+      <div className={`px-4 py-2 text-xs font-semibold flex items-center gap-2 border-b border-gray-200/60 ${
+        settings.enabled ? 'bg-emerald-50/50 text-emerald-700' : 'bg-gray-100/50 text-gray-500'
       } relative z-10`}>
-        <div className={`w-2 h-2 rounded-full ${settings.enabled ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'bg-white/30'}`} />
+        <div className={`w-2 h-2 rounded-full ${settings.enabled ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-gray-400'}`} />
         {settings.enabled ? 'Active on this page' : 'Extension Paused'}
         <button
           onClick={() => useExtensionStore.getState().updateSettings({ enabled: !settings.enabled })}
-          className={`ml-auto text-[10px] uppercase tracking-wider px-2 py-1 rounded transition-colors ${
-            settings.enabled ? 'bg-emerald-500/20 hover:bg-emerald-500/30' : 'bg-white/10 hover:bg-white/20 text-white'
+          className={`ml-auto text-[10px] uppercase tracking-wider px-2 py-1 rounded transition-all font-bold ${
+            settings.enabled ? 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
           }`}
         >
           {settings.enabled ? 'Pause' : 'Enable'}
@@ -155,27 +155,27 @@ function Popup() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-white/10 relative z-10 bg-black/20">
+      <div className="flex border-b border-gray-200/60 relative z-10 bg-white">
         {(['settings', 'resume', 'cache'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-all relative ${
+            className={`flex-1 py-3 text-[11px] font-bold uppercase tracking-wider transition-all relative ${
               activeTab === tab
-                ? 'text-white'
-                : 'text-white/40 hover:text-white/70 hover:bg-white/5'
+                ? 'text-blue-600'
+                : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50/50'
             }`}
           >
             {tab}
             {activeTab === tab && (
-              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#2F2FE4] shadow-[0_0_8px_rgba(47,47,228,0.8)]" />
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600 shadow-[0_2px_8px_rgba(37,99,235,0.4)]" />
             )}
           </button>
         ))}
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-4 relative z-10 bg-[#080616]/50">
+      <div className="p-5 space-y-4 relative z-10 bg-[#F5F5F7]">
         {activeTab === 'settings' && (
           <>
             <ModelSelector plan={accountPlan} />
@@ -187,9 +187,9 @@ function Popup() {
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-3 border-t border-white/10 bg-black/40 text-[10px] text-white/30 text-center space-y-1 relative z-10">
-        <div className="font-medium text-emerald-500/80">✦ 100% Private (No data leaves device)</div>
-        <div className="tracking-widest uppercase">Job Hunt Easy</div>
+      <div className="px-4 py-3.5 border-t border-gray-200/60 bg-gray-50 text-[10px] text-gray-400 text-center space-y-1 relative z-10">
+        <div className="font-semibold text-emerald-600/90">✦ 100% Private (No data leaves device)</div>
+        <div className="tracking-widest uppercase font-bold text-gray-500">Job Hunt Easy</div>
       </div>
     </div>
   )
