@@ -194,12 +194,14 @@ export interface OpenRouterConfig {
 
 // Models we support — only models with active API keys are enabled
 export const SUPPORTED_MODELS = [
+  /*
   {
     id: 'meta-llama/llama-3.3-70b-instruct:free',
     label: '🟢 Standard [Llama 3.3 70B]',
     provider: 'openrouter' as AIProvider,
     free: true,
   },
+  */
   {
     id: 'openai/gpt-oss-120b:free',
     label: '✨ Balanced [GPT-OSS 120B]',
@@ -222,7 +224,7 @@ export const SUPPORTED_MODELS = [
 ] as const
 
 export const DEFAULT_SETTINGS: Settings = {
-  model: 'meta-llama/llama-3.3-70b-instruct:free',
+  model: 'openai/gpt-oss-120b:free',
   enabled: true,
   tone: 'professional',
   maxAnswerLength: 300,
